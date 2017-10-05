@@ -1,1 +1,0 @@
-# Pimdaki_dashborad
