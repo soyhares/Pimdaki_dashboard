@@ -98,7 +98,7 @@
                 <ul class="nav" id="side-menu">
                     <li class="sidebar-search">
                         <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Search...">
+                            <input id="txt_search" type="text" class="form-control" placeholder="Search...">
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary" type="button">
                                         <i class="fa fa-search"></i>
@@ -151,7 +151,7 @@
                         <div class="col-lg-6">
                              <div class="form-group">
                                 <label>Categoría</label>
-                                <select class="form-control">
+                                <select id="dd_category" class="form-control">
                                     <option>Promociones</option>
                                     <option>Electro y Tecnología</option>
                                     <option>Entretenimiento</option>
@@ -164,7 +164,7 @@
 
                             <div class="form-group">
                                 <label>SubCategoría</label>
-                                <select class="form-control">
+                                <select id="dd_subCategory" class="form-control">
                                     <option>Accesorios</option>
                                     <option>Audio y video</option>
                                     <option>Regalos</option>
@@ -189,13 +189,13 @@
                             <form role="form">
                                 <div class="form-group">
                                     <label>Código de producto</label>
-                                    <input class="form-control">
+                                    <input id="txt_productID" class="form-control">
                                     <p class="help-block">Ingresa el código al dorso del empaque.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Código de barras</label>
-                                    <input class="form-control">
+                                    <input id="txt_barCode" class="form-control">
                                     <p class="help-block">Ingresa el código de barras al dorso del empaque.</p>
                                 </div>
                             </form>
@@ -205,25 +205,25 @@
                             <form role="form">
                                 <div class="form-group">
                                     <label>Nombre del producto</label>
-                                    <input class="form-control">
+                                    <input id="txt_productName" class="form-control">
                                     <p class="help-block">Ingresa el nombre completo del producto.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Modelo del Producto (Si Posee Alguno)</label>
-                                    <input class="form-control">
+                                    <input id="txt_productModel" class="form-control">
                                     <p class="help-block">Ingresa el modelo del producto.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Precio Actual</label>
-                                    <input class="form-control">
+                                    <input id="txt_price" class="form-control">
                                     <p class="help-block">Ingresa el precio de venta del producto.</p>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label>Precio Anterior (Si es promoción)</label>
-                                    <input class="form-control">
+                                    <input id="txt_oldPrice" class="form-control">
                                     <p class="help-block">Ingresa el precio que tenía anteriormente.</p>
                                 </div>
                             </form>
@@ -250,13 +250,13 @@
                             <form role="form">
                                 <div class="form-group">
                                     <label>Marca Comercial</label>
-                                    <input class="form-control">
+                                    <input id="txt_trademark" class="form-control">
                                     <p class="help-block">Ingresa la marca comercial del producto.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Descripción del Producto</label>
-                                    <textarea class="form-control" rows="5"></textarea>
+                                    <textarea id="ta_descripPro" class="form-control" rows="5"></textarea>
                                 </div>
                             </form>
                         </div>
@@ -265,18 +265,18 @@
                             <form role="form">
                                 <div class="form-group">
                                     <label>Dimensiones del producto</label>
-                                    <input class="form-control">
+                                    <input id="txt_productSize" class="form-control">
                                     <p class="help-block">Ingresa las dimensiones del producto.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Materiales</label>
-                                    <select multiple class="form-control">
-                                        <option>Plástico</option>
-                                        <option>Metal</option>
-                                        <option>Aluminio</option>
-                                        <option>Hierro</option>
-                                        <option>Madera</option>
+                                    <select id="dd_materials" multiple class="form-control">
+                                        <option value="Plastico">Plástico</option>
+                                        <option value="Metal">Metal</option>
+                                        <option value="Aluminio">Aluminio</option>
+                                        <option value="Hierro">Hierro</option>
+                                        <option value="Madera">Madera</option>
                                         <option>Cartón</option>
                                         <option>Vidrio</option>
                                     </select>
@@ -311,8 +311,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-default">Agregar</button>
-                                    <button type="reset" class="btn btn-default">Reiniciar</button>
+                                    <button id="btn_push" type="button" class="btn btn-default">Agregar</button>
+                                    <button id="btn_reset" type="reset"  class="btn btn-default">Reiniciar</button>
                                 </div>
                             </form>
                         </div>
@@ -331,7 +331,8 @@
 </div>
 
 
-
+<!-- Database  -->
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
 
 <!-- jQuery -->
 <script src="js/jquery.min.js"></script>

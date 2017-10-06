@@ -1,41 +1,91 @@
+//DATABASE
+/*
+Conexion
+ */
+    const config = {
+        apiKey: "AIzaSyDzrlNuSRMeGYAqWvFS_3h53WeFsmMNxNg",
+        authDomain: "pimdaki-e16a0.firebaseapp.com",
+        databaseURL: "https://pimdaki-e16a0.firebaseio.com",
+        projectId: "pimdaki-e16a0",
+        storageBucket: "pimdaki-e16a0.appspot.com",
+        messagingSenderId: "172646261705"
+      };
+     firebase.initializeApp(config)
+
 $(document).on('ready', function() {
     $("#input-folder-2").fileinput({
-        browseLabel: 'Selecciona el folder de imagenes...',
-        previewFileExtSettings: {
-            'doc': function(ext) {
-                return ext.match(/(doc|docx)$/i);
-            },
-            'xls': function(ext) {
-                return ext.match(/(xls|xlsx)$/i);
-            },
-            'ppt': function(ext) {
-                return ext.match(/(ppt|pptx)$/i);
-            },
-            'jpg': function(ext) {
-                return ext.match(/(jp?g|png|gif|bmp)$/i);
-            },
-            'zip': function(ext) {
-                return ext.match(/(zip|rar|tar|gzip|gz|7z)$/i);
-            },
-            'htm': function(ext) {
-                return ext.match(/(php|js|css|htm|html)$/i);
-            },
-            'txt': function(ext) {
-                return ext.match(/(txt|ini|md)$/i);
-            },
-            'mov': function(ext) {
-                return ext.match(/(avi|mpg|mkv|mov|mp4|3gp|webm|wmv)$/i);
-            },
-            'mp3': function(ext) {
-                return ext.match(/(mp3|wav)$/i);
-            },
-        }
+        browseLabel: 'Selecciona imagenes...',
+        previewFileType: "image",
+        language: "es",
+        showUpload: false,
+        browseClass: "btn btn-success",
+        browseLabel: "Agregar",
+        browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
+        removeClass: "btn btn-danger",
+        removeLabel: "Eliminar",
+        removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
+        uploadClass: "btn btn-info",
+        uploadLabel: "Cargar",
+        uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
+    });
+    // method chaining
+    // $('#input-folder-2').fileinput('upload').fileinput('disable');
+    var catalog =[];
+    $('#input-folder-2').on('fileloaded', function(event, file, previewId, index, reader) {
+        // Get a reference to the storage service, which is used to create references in your storage bucket
+        var storage = firebase.storage();
+        // Create a storage reference from our storage service
+        var storageRef = storage.ref();
+        //Create the file metadata
+        var metadata = {
+          contentType: 'image/jpeg'
+        };
+        //Upload file and metadata to the object 'images/mountains.jpg'
+        var uploadTask = storageRef.child($("#txt_productID").val()+'/' + file.name).put(file, metadata);
+        //Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function(snapshot) {
+            //Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
+                break;
+            }
+          }, function(error) {
+          //A full list of error codes is available at
+          //https://firebase.google.com/docs/storage/web/handle-errors
+          switch (error.code) {
+            case 'storage/unauthorized':
+              //User doesn't have permission to access the object
+              break;
+            case 'storage/canceled':
+              //User canceled the upload
+              break;
+            case 'storage/unknown':
+              //Unknown error occurred, inspect error.serverResponse
+              break;
+          }
+        }, function() {
+          // Upload completed successfully, now we can get the download URL
+          var downloadURL = uploadTask.snapshot.downloadURL;
+          cosole.log(downloadURL);
+          catalog.push(downloadURL);
+         
+          
+        });
+      
     });
 
-    $('#input-folder-2').on('fileselect', function(event, numFiles, label) {
-        console.log("fileselect");
-    });
+//---------------------- DASHBOARD ADMINISTRATOR LISTENER -------------------------------
+    _onChangeStatusPage(catalog);
 });
+
+
 
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
@@ -67,3 +117,99 @@ $(function() {
         element.addClass('active');
     }
 });
+
+//ROUTES
+/*ARTICULOS*/
+    const ARTICULOS = "storage/products";
+    const ARTICULOS_CATEGORIA=  ARTICULOS+"/categories";
+
+/*PEDIDOS*/
+    const PEDIDO = "storage/requests";
+    const PEDIDO_ARTICULOS=  PEDIDO+"/categories";
+
+
+;
+
+//ADD NODES
+const agregar = (ruta, obj)=>{
+    firebase.database()
+        .ref(ruta)
+        .set({...obj})
+        .then(()=>console.log("Realizado con exito!"))
+        .catch((error)=>console.log("Error: "+error));
+}
+//UPDATE 
+const actualizar=(ruta, dato)=>{
+    firebase.database()
+        .ref(ruta+'/')
+        .set({dato})
+        .then(()=>console.log("Realizado con exito!"))
+        .catch((error)=>console.log("Error: "+error));
+}
+//DELETE
+const borrar=(ruta)=>{
+    alert(ruta);
+}
+//DISPLAY   
+const mostrar=(ruta, detalle="")=>{
+    firebase.database().ref(ruta+'/'+detalle).on('value', function(snapshot) {
+        console.log(snapshot.val());
+    }); 
+}
+
+//CONTROLLER METHODS
+
+/*
+    Listening page actions
+ */function _onChangeStatusPage(folder=()=>null){
+       let materials = {};
+       let category= $('#dd_category').val();
+       let subCategory= $('#dd_subCategory').val();
+       $('#dd_materials').change(function () {
+                        
+                        $( "#dd_materials option:selected" ).each(function(i) {
+                            materials[i]=$( this ).text();
+                        });
+            
+                      })
+                      .change();
+       let id = $("#txt_productID").val();
+       let barCode = $("#txt_barCode").val();
+       let name = $("#txt_productName").val();
+       let model = $("#txt_productModel").val();
+       let price = $("#txt_price").val();
+       let oldPrice = $("#txt_oldPrice").val();
+       let tradeMark = $("#txt_trademark").val();
+       let size = $("#txt_productSize").val();
+       let description = $("#ta_descripPro").val();
+
+        $('#btn_reset').click(()=>alert("click"));
+    
+        $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,folder)});
+ 
+  }              
+/*
+    Listening page actions
+ */function _addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,catalog){
+        const product={
+            category,
+            subCategory,
+            barCode,
+            name,
+            model,
+            price,
+            oldPrice,
+            tradeMark,
+            size,
+            description,
+            materials,
+            catalog
+        };
+       let route = ARTICULOS_CATEGORIA+"/"+product.category+"/"+product.subCategory+"/"+id+"/";
+      agregar(route,product)
+       
+    }
+
+
+
+
