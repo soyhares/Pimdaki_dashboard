@@ -82,7 +82,7 @@ $(document).on('ready', function() {
     });
 
 //---------------------- DASHBOARD ADMINISTRATOR LISTENER -------------------------------
-    _onChangeStatusPage(catalog);
+    _onChangeStatusPage();
 });
 
 
@@ -161,7 +161,7 @@ const mostrar=(ruta, detalle="")=>{
 
 /*
     Listening page actions
- */function _onChangeStatusPage(folder=()=>null){
+ */function _onChangeStatusPage(){
        let materials = {};
        let category= $('#dd_category').val();
        let subCategory= $('#dd_subCategory').val();
@@ -182,11 +182,11 @@ const mostrar=(ruta, detalle="")=>{
        let tradeMark = $("#txt_trademark").val();
        let size = $("#txt_productSize").val();
        let description = $("#ta_descripPro").val();
-
+        let folder=null;
         $('#btn_reset').click(()=>alert("click"));
     
         $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,folder)});
- 
+
   }              
 /*
     Listening page actions
