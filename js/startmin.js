@@ -73,7 +73,7 @@ $(document).on('ready', function() {
         }, function() {
           // Upload completed successfully, now we can get the download URL
           var downloadURL = uploadTask.snapshot.downloadURL;
-          cosole.log(downloadURL);
+          console.log(downloadURL);
           catalog.push(downloadURL);
          
           
@@ -82,7 +82,7 @@ $(document).on('ready', function() {
     });
 
 //---------------------- DASHBOARD ADMINISTRATOR LISTENER -------------------------------
-    _onChangeStatusPage();
+    _onChangeStatusPage(catalog);
 });
 
 
@@ -161,7 +161,7 @@ const mostrar=(ruta, detalle="")=>{
 
 /*
     Listening page actions
- */function _onChangeStatusPage(){
+ */function _onChangeStatusPage(catalog){
        let materials = {};
        let category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description;
        $('#dd_category').change(()=>{category=$('#dd_category').val()}); 
@@ -181,10 +181,9 @@ const mostrar=(ruta, detalle="")=>{
           });
         })
         .change();
-
-       let folder=null;
+;
         $('#btn_reset').click(()=>alert("click"));
-        $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,folder)});
+        $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,catalog)});
  
 
   }              
