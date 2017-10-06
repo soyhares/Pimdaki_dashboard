@@ -163,29 +163,29 @@ const mostrar=(ruta, detalle="")=>{
     Listening page actions
  */function _onChangeStatusPage(){
        let materials = {};
-       let category= $('#dd_category').val();
-       let subCategory= $('#dd_subCategory').val();
+       let category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description;
+       $('#dd_category').change(()=>{category=$('#dd_category').val()}); 
+       $('#dd_subCategory').change(()=>{subCategory=$('#dd_subCategory').val()}); 
+       $("#txt_productID").keyup(()=>{id=$("#txt_productID").val()});
+       $("#txt_barCode").keyup(()=>{ barCode=$("#txt_barCode").val()});
+       $("#txt_productName").keyup(()=>{ name=$("#txt_productName").val()});
+       $("#txt_productModel").keyup(()=>{ model=$("#txt_productModel").val()});
+       $("#txt_price").keyup(()=>{ price=$("#txt_price").val()});
+       $("#txt_oldPrice").keyup(()=>{ oldPrice=$("#txt_oldPrice").val()});
+       $("#txt_trademark").keyup(()=>{ tradeMark=$("#txt_trademark").val()});
+       $("#txt_productSize").keyup(()=>{ size=$("#txt_productSize").val()});
+       $("#ta_descripPro").keyup(()=>{ description=$("#ta_descripPro").val()});
        $('#dd_materials').change(function () {
-                        
-                        $( "#dd_materials option:selected" ).each(function(i) {
-                            materials[i]=$( this ).text();
-                        });
-            
-                      })
-                      .change();
-       let id = $("#txt_productID").val();
-       let barCode = $("#txt_barCode").val();
-       let name = $("#txt_productName").val();
-       let model = $("#txt_productModel").val();
-       let price = $("#txt_price").val();
-       let oldPrice = $("#txt_oldPrice").val();
-       let tradeMark = $("#txt_trademark").val();
-       let size = $("#txt_productSize").val();
-       let description = $("#ta_descripPro").val();
-        let folder=null;
+          $( "#dd_materials option:selected" ).each(function(i) {
+              materials[i]=$( this ).text();
+          });
+        })
+        .change();
+
+       let folder=null;
         $('#btn_reset').click(()=>alert("click"));
-    
         $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,folder)});
+ 
 
   }              
 /*
@@ -206,6 +206,8 @@ const mostrar=(ruta, detalle="")=>{
             catalog
         };
        let route = ARTICULOS_CATEGORIA+"/"+product.category+"/"+product.subCategory+"/"+id+"/";
+      console.log(route);
+       console.log(product);
       agregar(route,product)
        
     }
