@@ -1,8 +1,7 @@
 //DATABASE
 /*
 Conexion
- */
-    const config = {
+ */const config = {
         apiKey: "AIzaSyDzrlNuSRMeGYAqWvFS_3h53WeFsmMNxNg",
         authDomain: "pimdaki-e16a0.firebaseapp.com",
         databaseURL: "https://pimdaki-e16a0.firebaseio.com",
@@ -12,7 +11,26 @@ Conexion
       };
      firebase.initializeApp(config)
 
+
+// --------------- NAVEGATION DASHBOARD ---------------
+
+/*
+  Animation to navigation page
+ */const showPage=(id="tbl_producs",display="true")=>{//frm || tbl 
+      //hide all page here!
+      $("#frm_products").css("display", "none");
+      $("#tbl_producs").css("display", "none");
+
+      let page =$("#"+id);
+      page.css("display", display?"display":"none");
+      display?page.fadeIn(1000):page.fadeOut(1000);
+    }
+      
+/*
+  main
+ */
 $(document).on('ready', function() {
+    showPage();
     $("#input-folder-2").fileinput({
         browseLabel: 'Selecciona imagenes...',
         previewFileType: "image",
@@ -81,12 +99,16 @@ $(document).on('ready', function() {
       
     });
 
-//---------------------- DASHBOARD ADMINISTRATOR LISTENER -------------------------------
+  $(document).ready(function() {
+                $('#dataTables-example').DataTable({
+                        responsive: true
+                });
+            });
+
+//---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
     _onChangeStatusPage(catalog);
+
 });
-
-
-
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
 // Sets the min-height of #page-wrapper to window size
@@ -118,58 +140,84 @@ $(function() {
     }
 });
 
-//ROUTES
-/*ARTICULOS*/
-    const ARTICULOS = "storage/products";
-    const ARTICULOS_CATEGORIA=  ARTICULOS+"/categories";
+//------------ ROUTES ------------------
+/*PRODUCTS*/
+    const PRODUCTS = "storage/products";
+    const CATEGORY_PRODUCTS=  PRODUCTS+"/categories";
 
-/*PEDIDOS*/
-    const PEDIDO = "storage/requests";
-    const PEDIDO_ARTICULOS=  PEDIDO+"/categories";
+/*ORDERS*/
+    const ORDERS = "storage/orders";
+    const ORDER_PROFUCTS=  ORDERS+"/categories";
 
-
-;
-
+//---------- MANAGEMENT DATA METHODS -----------
 //ADD NODES
-const agregar = (ruta, obj)=>{
-    firebase.database()
-        .ref(ruta)
-        .set({...obj})
-        .then(()=>console.log("Realizado con exito!"))
-        .catch((error)=>console.log("Error: "+error));
+const addData = (route, obj)=>{
+  firebase.database()
+          .ref(route)
+          .set({...obj})
+          .then(()=>console.log("Realizado con exito!"))
+          .catch((error)=>console.log("Error: "+error));
 }
-//UPDATE 
-const actualizar=(ruta, dato)=>{
-    firebase.database()
-        .ref(ruta+'/')
-        .set({dato})
-        .then(()=>console.log("Realizado con exito!"))
-        .catch((error)=>console.log("Error: "+error));
-}
+
 //DELETE
-const borrar=(ruta)=>{
-    alert(ruta);
+const deleteData=(route)=>{
+    alert(route);
 }
 //DISPLAY   
-const mostrar=(ruta, detalle="")=>{
-    firebase.database().ref(ruta+'/'+detalle).on('value', function(snapshot) {
-        console.log(snapshot.val());
-    }); 
+const loadDataTable=(route)=>{
+  firebase.database()
+          .ref()
+          .once('value', function(snapshot){
+                  if(snapshot.exists()){
+                  var content = '';
+                  snapshot.forEach(function(data){
+                      var val = data.val();
+                      content +='<tr>';
+                      content += '<td>' + val.descripcion + '</td>';
+                      content += '<td>' + val.direccion + '</td>';
+                      content += '<td>' + val.estado + '</td>';
+                      content += '<td>' + val.imagen + '</td>';
+                      content += '<td>' + val.tipo + '</td>';
+                      content += '<td>' + val.udisplayName + '</td>';
+                      content += '<td>' + val.uemail + '</td>';
+                      content += '</tr>';
+          });
+          $('#ex-table').append(content);
+      }
+  });
 }
 
 //CONTROLLER METHODS
+
+
+/*
+    Clean inputs
+ */
+ function _reset(){
+       $("#txt_productID").val("");
+       $("#txt_barCode").val("");
+       $("#txt_productName").val("");
+       $("#txt_productModel").val("");
+       $("#txt_price").val("");
+       $("#txt_oldPrice").val("");
+       $("#txt_trademark").val("");
+       $("#txt_productSize").val("");
+       $("#ta_descripPro").val("");
+       location.reload(); 
+  }
 
 /*
     Listening page actions
  */function _onChangeStatusPage(catalog){
        let materials = {};
-       let category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description;
+       let category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description;
        $('#dd_category').change(()=>{category=$('#dd_category').val()}); 
        $('#dd_subCategory').change(()=>{subCategory=$('#dd_subCategory').val()}); 
        $("#txt_productID").keyup(()=>{id=$("#txt_productID").val()});
        $("#txt_barCode").keyup(()=>{ barCode=$("#txt_barCode").val()});
        $("#txt_productName").keyup(()=>{ name=$("#txt_productName").val()});
        $("#txt_productModel").keyup(()=>{ model=$("#txt_productModel").val()});
+       $("#txt_lot").keyup(()=>{ lot=$("#txt_lot").val()});
        $("#txt_price").keyup(()=>{ price=$("#txt_price").val()});
        $("#txt_oldPrice").keyup(()=>{ oldPrice=$("#txt_oldPrice").val()});
        $("#txt_trademark").keyup(()=>{ tradeMark=$("#txt_trademark").val()});
@@ -181,21 +229,23 @@ const mostrar=(ruta, detalle="")=>{
           });
         })
         .change();
-;
-        $('#btn_reset').click(()=>alert("click"));
-        $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,catalog)});
+
+        $('#btn_goForm').click(()=>{showPage("frm_products",true)});
+        $('#btn_reset').click(()=>{_reset()});
+        $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description,materials,catalog)});
  
 
   }              
 /*
-    Listening page actions
- */function _addProduct(category,subCategory,id,barCode,name,model,price,oldPrice,tradeMark,size,description,materials,catalog){
+    Controller data Product to be added
+ */function _addProduct(category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description,materials,catalog){
         const product={
             category,
             subCategory,
             barCode,
             name,
             model,
+            lot,
             price,
             oldPrice,
             tradeMark,
@@ -204,13 +254,33 @@ const mostrar=(ruta, detalle="")=>{
             materials,
             catalog
         };
-       let route = ARTICULOS_CATEGORIA+"/"+product.category+"/"+product.subCategory+"/"+id+"/";
-      console.log(route);
-       console.log(product);
-      agregar(route,product)
-       
+       let route = CATEGORY_PRODUCTS+"/"+product.category+"/"+product.subCategory+"/"+id+"/";
+        console.log(route);
+        console.log(product);
+        addData(route,product)
+         
     }
 
+
+    /*
+    
+   <tr class="gradeA">
+                                                <td>Misc</td>
+                                                <td>NetFront 3.1</td>
+                                                <td>Embedded devices</td>
+                                                <td class="center">-</td>
+                                                <td class="center">C</td>
+                                            </tr>
+
+    
+     <tr class="odd gradeX">
+                                                <td>Trident</td>
+                                                <td>Internet Explorer 4.0</td>
+                                                <td>Win 95+</td>
+                                                <td class="center">4</td>
+                                                <td class="center">X</td>
+                                            </tr>
+     */
 
 
 
