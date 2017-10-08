@@ -116,6 +116,15 @@
                     </li>
                     <li>
                         <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Productos</a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a id="item_table" href="#">Almacen</a>
+                                </li>
+                                <li>
+                                    <a id="item_frm" href="#">Agregar</a>
+                                </li>
+                               
+                            </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-sitemap fa-fw"></i> Pedidos<span class="fa arrow"></span></a>
@@ -361,12 +370,11 @@
         <!-- /////////////////////////////////////////////////--> 
         <!-- ////////////////// TABLE HERE!! //////////////////--> 
         <!-- /////////////////////////////////////////////////-->  
-        <div id="tbl_producs">
+        <div id="tbl_products">
            <div class="col-lg-6">
                 <div class="form-group">
                     <label>CATEGORIA</label>
                     <select id="tbl_dd_category" class="form-control">
-                        <option>Todas</option>
                         <option>Promociones</option>
                         <option>Electro y Tecnología</option>
                         <option>Entretenimiento</option>
@@ -382,7 +390,6 @@
                 <div class="form-group">
                     <label>SUB-CATEGORIA</label>
                     <select id="tbl_dd_subCategory" class="form-control">
-                        <option>Todas</option>
                         <option>Accesorios</option>
                         <option>Audio y video</option>
                         <option>Regalos</option>
@@ -419,9 +426,24 @@
                                             
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id ="dataTable">
                                        
-                                        
+                                        <tr class="gradeA">
+                                                <td>Misc</td>
+                                                <td>NetFront 3.1</td>
+                                                <td>Embedded devices</td>
+                                                <td class="center">-</td>
+                                                <td class="center">C</td>
+                                            </tr>
+
+    
+     <tr class="odd gradeX">
+                                                <td>Trident</td>
+                                                <td>Internet Explorer 4.0</td>
+                                                <td>Win 95+</td>
+                                                <td class="center">4</td>
+                                                <td class="center">X</td>
+                                            </tr>
                                     </tbody>
                                 </table>
                           
