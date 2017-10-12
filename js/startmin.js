@@ -36,113 +36,73 @@ const deleteData=(route)=>{
     alert(route);
 }
 //DISPLAY   
-const loadDataTable=(route)=>{
-  let val,category,subcategoria,content,id;
+const loadDataTable=(route)=>{ 
+  let table= $('#tbl_storage').DataTable();
+
   firebase.database()
           .ref(route)
-          .on('value', function(snapshot){
-              if(snapshot.exists()) snapshot.forEach(function(data){ 
-                  val= data.val();
-                  category = Object.keys(val)[0];
-                  category = Object.getOwnPropertyDescriptor(val, category);
-                  subcategory = Object.keys(category.value)[0];
-                  subcategory = Object.getOwnPropertyDescriptor(category.value, subcategory);
-                  product = subcategory.value;
-                  id =Object.keys(category.value)[0];
-                  content +='<tr class="gradeX" >';
-                  content += '<td class="center">' + id + '</td>';
-                  content += '<td class="center">' + product.name + '</td>';
-                  content += '<td class="center">' + product.description + '</td>';
-                  content += '<td>' + product.lot + '</td>';
-                  content += '<td>' + product.price + '</td>';
-                  content += '</tr>';
-                  
-                  });
-                //$('#dataTable').append(content); 
-          });
-                           
-                      //$('#dataTables-example').append(content);
-}                
-                      /* 
-
-                      */
-
-          
-         // $('#dataTables-example').append(content);
-
-    /*
-    
-   <tr class="gradeA">
-                                                <td>Misc</td>
-                                                <td>NetFront 3.1</td>
-                                                <td>Embedded devices</td>
-                                                <td class="center">-</td>
-                                                <td class="center">C</td>
-                                            </tr>
-
-    
-     <tr class="odd gradeX">
-                                                <td>Trident</td>
-                                                <td>Internet Explorer 4.0</td>
-                                                <td>Win 95+</td>
-                                                <td class="center">4</td>
-                                                <td class="center">X</td>
-                                            </tr>
-     */
-
-
-           /*let data=snapshot.val();
-
-      let category = Object.keys(data)[0];
-      category = Object.getOwnPropertyDescriptor(data, category);
-      data = category.value;
-      let subCategory = Object.keys(data)[0];
-      console.log(subCategory);
-      subCategory = Object.getOwnPropertyDescriptor(data,subCategory);
-      data = subCategory.value;
-      let id = Object.keys(data)[0]
-      id = Object.getOwnPropertyDescriptor(data,id);
-      let product = id.value;
-      console.log(product);
-      }
-   
-
-                      //console.log(Object.keys("subcategory: " +subCategory));
-                      //console.log(Object.entries(val))
-                      //
-                     /* new Array(rows)
-                    .fill(null)
-                    .map(
-                      (e, i) => {
-                        points=points-5;
-                        top=top-5
-                        return(
-                          <StampsView key={i} stamps={points} top={top<5?top:5} />
-                        )
-                      }
-                    )*/
- 
-          /*var content = '';
-          content +='<tr class="gradeA" >';
-                      content += '<td class="center">' + "subcategory "+ '</td>';
-                      content += '<td class="center">' + "product.name" + '</td>';
-                      content += '<td class="center">' + "product.description" + '</td>';
-                      content += '<td>' + "product.lot" + '</td>';
-                      content += '<td>' + "product.price "+ '</td>';
-                    
-                      content += '</tr>';
-
-                      content +='<tr class="gradeX" >';
-                      content += '<td class="center">' + "subcategory "+ '</td>';
-                      content += '<td class="center">' + "product.name" + '</td>';
-                      content += '<td class="center">' + "product.description" + '</td>';
-                      content += '<td>' + "product.lot" + '</td>';
-                      content += '<td>' + "product.price "+ '</td>';
-                    
-                      content += '</tr>';*/
-
+          .on('child_added', function(snapshot){
+              if(snapshot.exists()) {
+                  let data = snapshot.val();
+                  table.rows.add([{
+                    0:snapshot.key,
+                    1:data.name,
+                    2:data.description,
+                    3:data.lot,
+                    4:data.price,
+                    5:data.oldPrice,
+                    6:data.barCode,
+                    7:data.tradeMark,
+                    8:data.model,
+                    9:data.materials,
+                    10:data.size
+  
+                  }]).draw();
+              }           
+        }); 
+ }  
+//                  0:snapshot.key,          
+//                     1:data.barCode,
+//                     2:data.name,
+//                     3:data.description,
+//                     4:data.lot,
+//                     5:data.oldPrice,
+//                     6:data.price,
+//                     7:data.tradeMark,
+//                     8:data.model,
+//                     9:data.materials,
+//                     10:data.size
 
 //CONTROLLER METHODS
+
+/**
+ * capture table storage row and set to form
+ */
+function _captureRowData(){
+   //TABLE LISTENER
+    let table = $('#tbl_storage').DataTable();
+    $('#tbl_storage tbody').on( 'dblclick', 'tr', function () {
+        console.log( table.row( this ).data() );
+        _write(table.row( this ).data());
+    } );
+}
+
+/**
+ * Write data in form
+ */
+ function _write(data){
+       $("#txt_productID").val(data[0]);
+       $("#txt_productName").val(data[1]);
+       $("#ta_descripPro").val(data[2]);
+       $("#txt_lot").val(data[3]);
+       $("#txt_price").val(data[4]);
+       $("#txt_barCode").val(data[6]);
+       $("#txt_oldPrice").val(data[5]);
+       $("#txt_productModel").val(data[8]);
+       $("#txt_trademark").val(data[7]);
+       $("#txt_productSize").val(data[10]);
+       showPage("frm_products",true);
+  }
 
 /*
     Clean inputs
@@ -157,13 +117,26 @@ const loadDataTable=(route)=>{
        $("#txt_trademark").val("");
        $("#txt_productSize").val("");
        $("#ta_descripPro").val("");
+       $("#txt_lot").val("");
        location.reload(); 
   }
+
+
+  /*
+    lista los pedidos
+ */
+  function _displayStorageTable(category,subCategory){
+     let route = CATEGORY_PRODUCTS+"/"+category+"/"+subCategory;
+     console.log(route);
+     loadDataTable(route)
+  }
+
 
 /*
     Listening page actions
  */function _onChangeStatusPage(catalog){
     //VARS
+     
       let materials = {};
       let category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description;
     //KEYUP LISTENER   
@@ -179,7 +152,10 @@ const loadDataTable=(route)=>{
       $("#ta_descripPro").keyup(()=>{ description=$("#ta_descripPro").val()});
     //CHANGE LISTENER 
       $('#dd_category').change(()=>{category=$('#dd_category').val()}); 
-      $('#dd_subCategory').change(()=>{subCategory=$('#dd_subCategory').val()}); 
+      $('#dd_subCategory').change(()=>{
+                                        subCategory=$('#dd_subCategory').val()
+                                        _displayStorageTable(category,subCategory);
+                                      });
       $('#dd_materials').change(function () {
       $("#dd_materials option:selected" ).each(function(i) {
                                                               materials[i]=$( this ).text();
@@ -192,10 +168,12 @@ const loadDataTable=(route)=>{
       $('#btn_goForm').click(()=>{showPage("frm_products",true)});
       $('#btn_reset').click(()=>{_reset()});
       $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description,materials,catalog)});
+    
+   
     //METHODS
-    loadDataTable(CATEGORY_PRODUCTS);
-    //DATATABLES
-     $('#dataTables-example').DataTable({responsive: true});
+      _captureRowData();
+      
+    
   }   
 
 /*
@@ -308,7 +286,6 @@ $(document).on('ready', function() {
         });
       
     });             
-  
 
 //---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
     _onChangeStatusPage(catalog);

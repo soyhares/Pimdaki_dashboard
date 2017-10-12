@@ -153,13 +153,7 @@
                     <h1 class="page-header">Productos</h1>
                 </div>
             </div>
-        <!-- /////////////////////////////////////////////////--> 
-        <!-- ////////////////// FORM HERE!! //////////////////--> 
-        <!-- /////////////////////////////////////////////////-->      
-        <div id="frm_products">
-            <div class="container-fluid">
-                <!-- ... Your content goes here ... -->
-            
+
             <!-- Primer Panel de Ingreso --> 
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -211,7 +205,12 @@
                     </div>
                 </div>
             </div>
-           
+        <!-- /////////////////////////////////////////////////--> 
+        <!-- ////////////////// FORM HERE!! //////////////////--> 
+        <!-- /////////////////////////////////////////////////-->      
+        <div id="frm_products">
+            <div class="container-fluid">
+                <!-- ... Your content goes here ... -->   
             <!-- Segundo Panel de Ingreso -->
             <div  class="col-lg-12">
                     <div class="panel panel-default">
@@ -371,88 +370,41 @@
         <!-- ////////////////// TABLE HERE!! //////////////////--> 
         <!-- /////////////////////////////////////////////////-->  
         <div id="tbl_products">
-           <div class="col-lg-6">
-                <div class="form-group">
-                    <label>CATEGORIA</label>
-                    <select id="tbl_dd_category" class="form-control">
-                        <option>Promociones</option>
-                        <option>Electro y Tecnología</option>
-                        <option>Entretenimiento</option>
-                        <option>Hogar y Cocina</option>
-                        <option>BBQ y Jardines</option>
-                        <option>Deportes y Ocio</option>
-                        <option>Salud y Belleza</option>
-                    </select>
-                </div>
-            </div>
+                <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="dataTable_wrapper">
+                                            <table class="table table-striped table-bordered table-hover" id="tbl_storage">
+                                                  <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            
+                                                            <th>NOMBRE</th>
+                                                            <th>DESCRIPCION</th>
+                                                            <th>CANTIDAD</th>
+                                                            
+                                                            <th>PRECIO</th>
+                                                            
+                                                                                  
+                                                        </tr>
+                                                    </thead>
+                                                  
+                                                </table>
+                                         </div> 
 
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label>SUB-CATEGORIA</label>
-                    <select id="tbl_dd_subCategory" class="form-control">
-                        <option>Accesorios</option>
-                        <option>Audio y video</option>
-                        <option>Regalos</option>
-                        <option>Juegos de Mesa</option>
-                        <option>Hobby</option>
-                        <option>Accesorios Hogar</option>
-                        <option>Accesorios Cocina</option>
-                        <option>Baterías, Ollas y Sartenes</option>
-                        <option>Electrodomésticos</option>
-                        <option>Accesorios Parrilleros</option>
-                        <option>Utencilios</option>
-                        <option>Luces para exterior</option>
-                        <option>Lámparas Solares</option>
-                        <option>Accesorio Ciclismo</option>
-                        <option>Juegos Indoor</option>
-                        <option>Cuidado Personal</option>
-                        <option>Masajeadores</option>
-                        <option>Terapia</option>
-                    </select>
-                </div>
+                                     </div> 
+                                </div> 
+                             </div> 
+                      </div> 
+                </div>  
             </div>
-                
-
-            <div class="panel-body">
-                 <div class="dataTable_wrapper">
-                            <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                  <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>NOMBRE</th>
-                                            <th>DESCRIPCION</th>
-                                            <th>CANTIDAD</th>
-                                            <th>PRECIO</th>
-                                            
-                                        </tr>
-                                    </thead>
-                                    <tbody id ="dataTable">
-                                       
-                                        <tr class="gradeA">
-                                                <td>Misc</td>
-                                                <td>NetFront 3.1</td>
-                                                <td>Embedded devices</td>
-                                                <td class="center">-</td>
-                                                <td class="center">C</td>
-                                            </tr>
-
-    
-     <tr class="odd gradeX">
-                                                <td>Trident</td>
-                                                <td>Internet Explorer 4.0</td>
-                                                <td>Win 95+</td>
-                                                <td class="center">4</td>
-                                                <td class="center">X</td>
-                                            </tr>
-                                    </tbody>
-                                </table>
-                          
-                    </div>
-            </div>
+         
 
              <div class="col-lg-12">
                 <div class="form-group">
-                    <button id="btn_goForm" type="button" class="btn btn-default btn-lg">Agregar</button>
+                    <button id="btn_goForm" type="button" class="btn btn-default btn-lg">GUARDAR</button>
                 </div>
             </div>
         </div>
@@ -496,6 +448,5 @@
 
 <!-- Custom Theme JavaScript -->
 <script src="js/startmin.js"></script>
-
 </body>
 </html>
