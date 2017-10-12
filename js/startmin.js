@@ -41,11 +41,18 @@ const updateData = (route, obj)=>{
           .update({...obj})
           .then(()=>console.log("Realizado con exito!"))
           .catch((error)=>console.log("Error: "+error));
+          showPage("tbl_products",true);
+
 }
 
 //DELETE
 const deleteData=(route)=>{
-    alert(route);
+    firebase.database()
+          .ref(route)
+          .remove()
+          .then(()=>console.log("Realizado con exito!"))
+          .catch((error)=>console.log("Error: "+error));
+    console.log(route);
 }
 //DISPLAY   
 const loadDataTable=(route)=>{ 
@@ -105,6 +112,7 @@ const loadDataTable=(route)=>{
        showPage("frm_products",true);
        action="ACTUALIZAR"
        form=data;
+       $("#btn_delete").css("visible",true);
   }
 
 /*
@@ -165,8 +173,8 @@ const loadDataTable=(route)=>{
       //$('#btn_goForm').click(()=>{showPage("frm_products",true)});
       $('#btn_reset').click(()=>{_reset()});
       $('#btn_push').click(()=> {_addProduct(category,subCategory,materials,catalog,colors)});
-      
-   
+      $('#btn_delete').click(()=> {deleteData(CATEGORY_PRODUCTS+"/"+category+"/"+subCategory+"/"+form[0]+"/")});
+      $("#btn_delete").css("visible",true);
     //METHODS
       _captureRowData();
       
@@ -209,8 +217,7 @@ const loadDataTable=(route)=>{
          console.log(product);
         //console.log(product);
         action=="GUARDAR"?addData(route,product):updateData(route,product);
-        showPage("tbl_products",true);
-
+        
     }
 // --------------- NAVEGATION DASHBOARD ---------------
 
