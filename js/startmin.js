@@ -11,7 +11,7 @@ Conexion
       };
      firebase.initializeApp(config)
 
-//------------ ROUTES ------------------
+//------------ VARS ------------------
 /*PRODUCTS*/
     const PRODUCTS = "storage/products";
     const CATEGORY_PRODUCTS=  PRODUCTS+"/categories";
@@ -20,6 +20,10 @@ Conexion
     const ORDERS = "storage/orders";
     const ORDER_PROFUCTS=  ORDERS+"/categories";
 
+/*PROPS*/
+    var screen="tbl_products"; 
+    var action="GUARDAR";
+    var form = {};
 
 //---------- MANAGEMENT DATA METHODS -----------
 //ADD NODES
@@ -27,6 +31,14 @@ const addData = (route, obj)=>{
   firebase.database()
           .ref(route)
           .set({...obj})
+          .then(()=>console.log("Realizado con exito!"))
+          .catch((error)=>console.log("Error: "+error));
+}
+
+const updateData = (route, obj)=>{
+  firebase.database()
+          .ref(route)
+          .update({...obj})
           .then(()=>console.log("Realizado con exito!"))
           .catch((error)=>console.log("Error: "+error));
 }
@@ -61,24 +73,13 @@ const loadDataTable=(route)=>{
               }           
         }); 
  }  
-//                  0:snapshot.key,          
-//                     1:data.barCode,
-//                     2:data.name,
-//                     3:data.description,
-//                     4:data.lot,
-//                     5:data.oldPrice,
-//                     6:data.price,
-//                     7:data.tradeMark,
-//                     8:data.model,
-//                     9:data.materials,
-//                     10:data.size
+
 
 //CONTROLLER METHODS
 
 /**
  * capture table storage row and set to form
- */
-function _captureRowData(){
+ */function _captureRowData(){
    //TABLE LISTENER
     let table = $('#tbl_storage').DataTable();
     $('#tbl_storage tbody').on( 'dblclick', 'tr', function () {
@@ -89,8 +90,7 @@ function _captureRowData(){
 
 /**
  * Write data in form
- */
- function _write(data){
+ */ function _write(data){
        $("#txt_productID").val(data[0]);
        $("#txt_productName").val(data[1]);
        $("#ta_descripPro").val(data[2]);
@@ -101,13 +101,15 @@ function _captureRowData(){
        $("#txt_productModel").val(data[8]);
        $("#txt_trademark").val(data[7]);
        $("#txt_productSize").val(data[10]);
+       $("#btn_push").val("ACTUALIZAR");
        showPage("frm_products",true);
+       action="ACTUALIZAR"
+       form=data;
   }
 
 /*
     Clean inputs
- */
- function _reset(){
+ */ function _reset(){
        $("#txt_productID").val("");
        $("#txt_barCode").val("");
        $("#txt_productName").val("");
@@ -124,8 +126,7 @@ function _captureRowData(){
 
   /*
     lista los pedidos
- */
-  function _displayStorageTable(category,subCategory){
+ */function _displayStorageTable(category,subCategory){
      let route = CATEGORY_PRODUCTS+"/"+category+"/"+subCategory;
      console.log(route);
      loadDataTable(route)
@@ -136,25 +137,15 @@ function _captureRowData(){
     Listening page actions
  */function _onChangeStatusPage(catalog){
     //VARS
-     
-      let materials = {};
-      let category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description;
-    //KEYUP LISTENER   
-      $("#txt_productID").keyup(()=>{id=$("#txt_productID").val()});
-      $("#txt_barCode").keyup(()=>{ barCode=$("#txt_barCode").val()});
-      $("#txt_productName").keyup(()=>{ name=$("#txt_productName").val()});
-      $("#txt_productModel").keyup(()=>{ model=$("#txt_productModel").val()});
-      $("#txt_lot").keyup(()=>{ lot=$("#txt_lot").val()});
-      $("#txt_price").keyup(()=>{ price=$("#txt_price").val()});
-      $("#txt_oldPrice").keyup(()=>{ oldPrice=$("#txt_oldPrice").val()});
-      $("#txt_trademark").keyup(()=>{ tradeMark=$("#txt_trademark").val()});
-      $("#txt_productSize").keyup(()=>{ size=$("#txt_productSize").val()});
-      $("#ta_descripPro").keyup(()=>{ description=$("#ta_descripPro").val()});
+      let materials={},colors={};
+      let category,subCategory;
+       
     //CHANGE LISTENER 
       $('#dd_category').change(()=>{category=$('#dd_category').val()}); 
       $('#dd_subCategory').change(()=>{
-                                        subCategory=$('#dd_subCategory').val()
-                                        _displayStorageTable(category,subCategory);
+                                        $("#btn_push").val(action);
+                                        subCategory=$('#dd_subCategory').val();
+                                       if(screen=="tbl_products") _displayStorageTable(category,subCategory);
                                       });
       $('#dd_materials').change(function () {
       $("#dd_materials option:selected" ).each(function(i) {
@@ -162,13 +153,19 @@ function _captureRowData(){
                                                               });
                                           })
                                           .change();
+      $('#dd_colors').change(function () {
+      $("#dd_colors option:selected" ).each(function(i) {
+                                                              colors[i]=$( this ).text();
+                                                              });
+                                          })
+                                          .change();
     //CLICKS LISTENER                                        
       $('#item_table').click(()=>{showPage("tbl_products",true)});
       $('#item_frm').click(()=>{showPage("frm_products",true)});
-      $('#btn_goForm').click(()=>{showPage("frm_products",true)});
+      //$('#btn_goForm').click(()=>{showPage("frm_products",true)});
       $('#btn_reset').click(()=>{_reset()});
-      $('#btn_push').click(()=> {_addProduct(category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description,materials,catalog)});
-    
+      $('#btn_push').click(()=> {_addProduct(category,subCategory,materials,catalog,colors)});
+      
    
     //METHODS
       _captureRowData();
@@ -178,7 +175,18 @@ function _captureRowData(){
 
 /*
     Controller data Product to be added
- */function _addProduct(category,subCategory,id,barCode,name,model,lot,price,oldPrice,tradeMark,size,description,materials,catalog){
+ */function _addProduct(category,subCategory,materials,catalog,colors){
+        let id =document.getElementById('txt_productID').value ;
+        let barCode =document.getElementById('txt_barCode').value ;
+        let name =document.getElementById('txt_productName').value ;
+        let model =document.getElementById('txt_productModel').value ;
+        let lot =document.getElementById('txt_lot').value ;
+        let price =document.getElementById('txt_price').value ;
+        let oldPrice =document.getElementById('txt_oldPrice').value ;
+        let tradeMark =document.getElementById('txt_trademark').value ;
+        let size =document.getElementById('txt_productSize').value ;
+        let description =document.getElementById('ta_descripPro').value
+        console.log(id);
         const product={
             category,
             subCategory,
@@ -192,13 +200,17 @@ function _captureRowData(){
             size,
             description,
             materials,
-            catalog
+            catalog,
+            colors,
+            rating:0
         };
        let route = CATEGORY_PRODUCTS+"/"+product.category+"/"+product.subCategory+"/"+id+"/";
-        console.log(route);
-        console.log(product);
-        addData(route,product)
-         
+        console.log(route+product);
+         console.log(product);
+        //console.log(product);
+        action=="GUARDAR"?addData(route,product):updateData(route,product);
+        showPage("tbl_products",true);
+
     }
 // --------------- NAVEGATION DASHBOARD ---------------
 
@@ -212,6 +224,8 @@ function _captureRowData(){
       let page =$("#"+id);
       page.css("display", display?"display":"none");
       display?page.fadeIn(1000):page.fadeOut(1000);
+      screen =id;
+      action="GUARDAR"
     }
       
 /*
