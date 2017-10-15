@@ -78,7 +78,9 @@ const loadDataTable=(route="", hasAll=false)=>{
                     10:data.size,
                     11:data.catalog,
                     12:data.rating,
-                    13:data.colors
+                    13:data.colors,
+                    14:data.category,
+                    15:data.subCategory
   
                   }]).draw();
               } 
@@ -110,9 +112,7 @@ const loadDataTable=(route="", hasAll=false)=>{
     let table = $('#tbl_storage').DataTable();
     $('#tbl_storage tbody').on( 'dblclick', 'tr', function () {
       let data = table.row( this ).data();
-        if(data[0]!= undefined 
-          && $("#dd_category").val()!="Todas"
-          && $("#dd_subCategory").val()!="Todas"){
+        if(data[0]!= undefined) {
           $('#modalForm').modal('show');
           _write(data);
         }else{
@@ -126,15 +126,12 @@ const loadDataTable=(route="", hasAll=false)=>{
  * load produc in form
  */function setDataTale(set){
       if(set){
-        
         showPage("frm_products",true);
        }else{
         _reset();
        }
-       
-       action="ACTUALIZAR";
-       
-}
+       action="ACTUALIZAR";      
+  }
 
 /**
  * Write data in form
@@ -149,6 +146,9 @@ const loadDataTable=(route="", hasAll=false)=>{
      $("#txt_productModel").val(data[8]);
      $("#txt_trademark").val(data[7]);
      $("#txt_productSize").val(data[10]);
+     $("#txt_category").val(data[14]);
+     $("#txt_subCategory").val(data[15]);
+     _imgPreview(data[0],data[11]);
      $("#btn_push").val("ACTUALIZAR");
      action="ACTUALIZAR"
      form=data;
@@ -196,7 +196,7 @@ const loadDataTable=(route="", hasAll=false)=>{
       $('#dd_subCategory').change(()=>{
                                         $("#btn_push").val(action);
                                         subCategory=$('#dd_subCategory').val();
-                                       if(screen=="tbl_products") _displayStorageTable(category,subCategory);
+                                        _displayStorageTable(category,subCategory);
                                       });
       $('#dd_materials').change(function () {
       $("#dd_materials option:selected" ).each(function(i) {
@@ -215,7 +215,7 @@ const loadDataTable=(route="", hasAll=false)=>{
       $('#item_frm').click(()=>{showPage("frm_products",true)});
       //$('#btn_goForm').click(()=>{showPage("frm_products",true)});
       $('#btn_reset').click(()=>{_reset()});
-      $('#btn_push').click(()=> {_addProduct(category,subCategory,materials,catalog,colors)});
+      $('#btn_push').click(()=> {_addProduct(materials,catalog,colors)});
       $('#btn_delete').click(()=> {deleteData(CATEGORY_PRODUCTS+"/"+category+"/"+subCategory+"/"+form[0]+"/")});
       $("#btn_delete").css("visible",true);
     //METHODS TABLE
@@ -225,7 +225,7 @@ const loadDataTable=(route="", hasAll=false)=>{
 
 /*
     Controller data Product to be added
- */function _addProduct(category,subCategory,materials,catalog,colors){
+ */function _addProduct(materials,catalog,colors){
         let id =document.getElementById('txt_productID').value ;
         let barCode =document.getElementById('txt_barCode').value ;
         let name =document.getElementById('txt_productName').value ;
@@ -235,7 +235,9 @@ const loadDataTable=(route="", hasAll=false)=>{
         let oldPrice =document.getElementById('txt_oldPrice').value ;
         let tradeMark =document.getElementById('txt_trademark').value ;
         let size =document.getElementById('txt_productSize').value ;
-        let description =document.getElementById('ta_descripPro').value
+        let description =document.getElementById('ta_descripPro').value;
+        let category =document.getElementById('txt_category').value;
+        let subCategory =document.getElementById('txt_subCategory').value;
         console.log(id);
         const product={
             category,
@@ -298,20 +300,13 @@ function _modalContent(data,title){
 }
 
 /**
- * traza el contenido del modal
+ * traza el contenido del modalError
  */
 function _modalError(msg,title){
-    // Create Cart Elemets
-    
-    // var $h0 = $("<h2>", {id:"", class:"media-heading text-warning", text: data[0]});
     var $h1 = $("<h4>", {id:"", class:"deleteText", text: msg});
     $("#modal-title-error").html(title)
     $("#modal-msg").html($h1);
-    
-  
 }
-
-
 
 
 // --------------- NAVEGATION DASHBOARD ---------------
@@ -356,7 +351,7 @@ function _fileUpload(){
         language: "es",
         showUpload: false,
         browseClass: "btn btn-success",
-        browseLabel: "Catalogo",
+        browseLabel: action,
         browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
         removeClass: "btn btn-danger",
         removeLabel: "Eliminar",
@@ -407,7 +402,7 @@ function addImages(catalog){
         var metadata = {
           contentType: 'image/jpeg'
         };
-        var uploadTask = storageRef.child($("#txt_productID").val()+'/' + file.name).put(file, metadata);
+        var uploadTask = storageRef.child($("#txt_productID").val()+'/' + "img-"+index).put(file, metadata);
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
           function(snapshot) {
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -439,8 +434,39 @@ function addImages(catalog){
 }
 
 
+function _imgPreview(key,catalog){
+ var img = "";
+ var btn="";
+ var div = "";
+ console.log(key);
+  for (var i = 0; i < catalog.length; i++) {
+    img = $("<img>", {id:"img-"+i, "class":"media-object", width:80,height:80,"alt":"Sample Image", src:catalog[i]});
+    let id ="img-"+i;
+    btn = $("<input>", {id:catalog[i], type:"button", value:"Borrar", "class":"btn btn-danger", onclick:"deleteImg("+key+",img-0)"});
+    
+    $("#img-preview").append(img);
+    $("#img-preview").append(btn);
+  }
 
+}
 
+function deleteImg(id,img){
+   console.log("Borrado-->"+id+""+img);
+  // // console.log(id);
+  // var storage = firebase.storage();
+
+  //   // Create a storage reference from our storage service
+  //   var storageRef = storage.ref();
+  //     // Create a reference to the file to delete
+  //   var desertRef = storageRef.child(id+'/'+img);
+
+  //   // Delete the file
+  //   desertRef.delete().then(function() {
+  //     console.log("Borrado-->"+id+"/"+img);
+  //   }).catch(function(error) {
+  //         console.log(error);
+  //   });
+}
 
 
 

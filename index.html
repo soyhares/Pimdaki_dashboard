@@ -206,6 +206,9 @@
                             </li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="#"><i class="fa fa-user"></i> Usuarios<span class="fa "></span></a>
+                    </li>
                 </ul>
 
             </div>
@@ -220,57 +223,7 @@
                 </div>
             </div>
 
-            <!-- Primer Panel de Ingreso --> 
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Ingresa la información
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                 <div class="form-group">
-                                    <label>Categoría</label>
-                                    <select id="dd_category" class="form-control">
-                                        <!--<option>Promociones</option>
-                                        <option>Electro y Tecnología</option>
-                                        <option>Entretenimiento</option>
-                                        <option>Hogar y Cocina</option>
-                                        <option>BBQ y Jardines</option>
-                                        <option>Deportes y Ocio</option>
-                                        <option>Salud y Belleza</option>-->
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label>Sub - Categoría</label>
-                                    <select id="dd_subCategory" class="form-control">
-                                       <!-- <option>Accesorios</option>
-                                        <option>Audio y video</option>
-                                        <option>Regalos</option>
-                                        <option>Juegos de Mesa</option>
-                                        <option>Hobby</option>
-                                        <option>Accesorios Hogar</option>
-                                        <option>Accesorios Cocina</option>
-                                        <option>Baterías, Ollas y Sartenes</option>
-                                        <option>Electrodomésticos</option>
-                                        <option>Accesorios Parrilleros</option>
-                                        <option>Utencilios</option>
-                                        <option>Luces para exterior</option>
-                                        <option>Lámparas Solares</option>
-                                        <option>Accesorio Ciclismo</option>
-                                        <option>Juegos Indoor</option>
-                                        <option>Cuidado Personal</option>
-                                        <option>Masajeadores</option>
-                                        <option>Terapia</option>-->
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
         <!-- /////////////////////////////////////////////////--> 
         <!-- ////////////////// FORM HERE!! //////////////////--> 
         <!-- /////////////////////////////////////////////////-->      
@@ -300,9 +253,41 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label>Modelo del Producto (Si Posee Alguno)</label>
-                                                <input id="txt_productModel" class="form-control">
-                                                <p class="help-block">Ingresa el modelo del producto.</p>
+                                                <label>Categoria</label>
+                                                <input id="txt_category" list="categories" class="form-control">
+                                                  <datalist id="categories">
+                                                        <option>Electro y Tecnología</option>
+                                                        <option>Entretenimiento</option>
+                                                        <option>Hogar y Cocina</option>
+                                                        <option>BBQ y Jardines</option>
+                                                        <option>Deportes y Ocio</option>
+                                                        <option>Salud y Belleza</option>
+                                                  </datalist>
+                                                <p class="help-block">Ingresa la categoria de producto.</p>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Sub-Categoria</label>
+                                                <input id="txt_subCategory" list="subCategories" class="form-control">
+                                                    <datalist id="subCategories">
+                                                        <option>Audio y video</option>
+                                                        <option>Regalos</option>
+                                                        <option>Juegos de Mesa</option>
+                                                        <option>Hobby</option>
+                                                        <option>Accesorios Hogar</option>
+                                                        <option>Accesorios Cocina</option>
+                                                        <option>Baterías, Ollas y Sartenes</option>
+                                                        <option>Electrodomésticos</option>
+                                                        <option>Accesorios Parrilleros</option>
+                                                        <option>Utencilios</option>
+                                                        <option>Luces para exterior</option>
+                                                        <option>Lámparas Solares</option>
+                                                        <option>Accesorio Ciclismo</option>
+                                                        <option>Juegos Indoor</option>
+                                                        <option>Cuidado Personal</option>
+                                                        <option>Masajeadores</option>
+                                                        <option>Terapia</option>
+                                                    </datalist>
+                                                <p class="help-block">Ingresa la sub-categoria del producto.</p>
                                             </div>
                                              <div class="form-group">
                                                 <label>Nombre del producto</label>
@@ -331,7 +316,11 @@
                                             <input id="txt_oldPrice" class="form-control">
                                             <p class="help-block">Ingresa el precio que tenía anteriormente.</p>
                                         </div>
-
+                                        <div class="form-group">
+                                                <label>Modelo del Producto (Si Posee Alguno)</label>
+                                                <input id="txt_productModel" class="form-control">
+                                                <p class="help-block">Ingresa el modelo del producto.</p>
+                                            </div>
                                         <div class="form-group">
                                         <label>Color</label>
                                         <select id="dd_colors" multiple class="form-control">
@@ -423,6 +412,13 @@
                             <!-- Formulario Costado Izquierdo -->
                             <div class="col-lg-12">
                                 <form role="form">
+
+                                    <div class="form-group">
+                                        <div id="img-preview" style="float:left; position: relative;" >
+                                           
+                                        </div>
+                                    </div>
+
                                     <div class="form-group">
                                         <!-- Ingreso de imagenes -->
                                         <input id="input-folder-2" name="input-folder-2[]" type="file" multiple webkitdirectory accept="image/*">
@@ -452,6 +448,57 @@
         <!-- ////////////////// TABLE HERE!! //////////////////--> 
         <!-- /////////////////////////////////////////////////-->  
         <div id="tbl_products">
+                 <!-- Primer Panel de Ingreso --> 
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Ingresa la información
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                 <div class="form-group">
+                                    <label>Categoría</label>
+                                    <select id="dd_category" class="form-control">
+                                        <!--<option>Promociones</option>
+                                        <option>Electro y Tecnología</option>
+                                        <option>Entretenimiento</option>
+                                        <option>Hogar y Cocina</option>
+                                        <option>BBQ y Jardines</option>
+                                        <option>Deportes y Ocio</option>
+                                        <option>Salud y Belleza</option>-->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Sub - Categoría</label>
+                                    <select id="dd_subCategory" class="form-control">
+                                       <!-- <option>Accesorios</option>
+                                        <option>Audio y video</option>
+                                        <option>Regalos</option>
+                                        <option>Juegos de Mesa</option>
+                                        <option>Hobby</option>
+                                        <option>Accesorios Hogar</option>
+                                        <option>Accesorios Cocina</option>
+                                        <option>Baterías, Ollas y Sartenes</option>
+                                        <option>Electrodomésticos</option>
+                                        <option>Accesorios Parrilleros</option>
+                                        <option>Utencilios</option>
+                                        <option>Luces para exterior</option>
+                                        <option>Lámparas Solares</option>
+                                        <option>Accesorio Ciclismo</option>
+                                        <option>Juegos Indoor</option>
+                                        <option>Cuidado Personal</option>
+                                        <option>Masajeadores</option>
+                                        <option>Terapia</option>-->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-body">
@@ -480,9 +527,6 @@
                 </div>  
         </div>
          
-
-             
-        </div>
     </div>
             
  
