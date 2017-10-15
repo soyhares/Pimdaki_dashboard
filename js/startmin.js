@@ -30,7 +30,7 @@ Conexion
 const addData = (route, obj)=>{
   firebase.database()
           .ref(route)
-          .set({...obj})
+          .set({..._cleanObj(obj)})
           .then(()=>console.log("Realizado con exito!"))
           .catch((error)=>console.log("Error: "+error));
 }
@@ -38,11 +38,11 @@ const addData = (route, obj)=>{
 const updateData = (route, obj)=>{
   firebase.database()
           .ref(route)
-          .update({...obj})
+          .update({..._cleanObj(obj)})
           .then(()=>console.log("Realizado con exito!"))
           .catch((error)=>console.log("Error: "+error));
           showPage("tbl_products",true);
-
+          action="GUARDAR"
 }
 
 //DELETE
@@ -54,12 +54,13 @@ const deleteData=(route)=>{
           .catch((error)=>console.log("Error: "+error));
     console.log(route);
 }
-//DISPLAY   
-const loadDataTable=(route)=>{ 
+//DISPLAY table data  
+const loadDataTable=(route="", hasAll=false)=>{ 
+  let ref=route;
   let table= $('#tbl_storage').DataTable();
-
+  hasAll?null:table.clear();
   firebase.database()
-          .ref(route)
+          .ref(ref)
           .on('child_added', function(snapshot){
               if(snapshot.exists()) {
                   let data = snapshot.val();
@@ -74,13 +75,31 @@ const loadDataTable=(route)=>{
                     7:data.tradeMark,
                     8:data.model,
                     9:data.materials,
-                    10:data.size
+                    10:data.size,
+                    11:data.catalog,
+                    12:data.rating,
+                    13:data.colors
   
                   }]).draw();
-              }           
-        }); 
+              } 
+             
+         }); 
  }  
 
+ const loadCategories=(route)=>{ 
+  firebase.database()
+          .ref(route)
+          .on('child_added', function(snapshot){
+            $("#dd_category").append("<option>"+snapshot.key+"</option>") ; 
+              for (var sub in snapshot.val()){
+                  $("#dd_subCategory").append("<option>"+sub+"</option>");
+                  _displayStorageTable(snapshot.key,sub,true)
+              }
+
+          }); 
+       $("#dd_category").append("<option selected>Todas</option>") ; 
+       $("#dd_subCategory").append("<option selected>Todas</option>");
+ }      
 
 //CONTROLLER METHODS
 
@@ -90,29 +109,51 @@ const loadDataTable=(route)=>{
    //TABLE LISTENER
     let table = $('#tbl_storage').DataTable();
     $('#tbl_storage tbody').on( 'dblclick', 'tr', function () {
-        console.log( table.row( this ).data() );
-        _write(table.row( this ).data());
+      let data = table.row( this ).data();
+        if(data[0]!= undefined 
+          && $("#dd_category").val()!="Todas"
+          && $("#dd_subCategory").val()!="Todas"){
+          $('#modalForm').modal('show');
+          _write(data);
+        }else{
+          _modalError("Selecione antes una categoria y sub-categoria de productos","Error");
+          $('#modalError').modal('show');
+        }
     } );
+}
+
+/**
+ * load produc in form
+ */function setDataTale(set){
+      if(set){
+        
+        showPage("frm_products",true);
+       }else{
+        _reset();
+       }
+       
+       action="ACTUALIZAR";
+       
 }
 
 /**
  * Write data in form
  */ function _write(data){
-       $("#txt_productID").val(data[0]);
-       $("#txt_productName").val(data[1]);
-       $("#ta_descripPro").val(data[2]);
-       $("#txt_lot").val(data[3]);
-       $("#txt_price").val(data[4]);
-       $("#txt_barCode").val(data[6]);
-       $("#txt_oldPrice").val(data[5]);
-       $("#txt_productModel").val(data[8]);
-       $("#txt_trademark").val(data[7]);
-       $("#txt_productSize").val(data[10]);
-       $("#btn_push").val("ACTUALIZAR");
-       showPage("frm_products",true);
-       action="ACTUALIZAR"
-       form=data;
-       $("#btn_delete").css("visible",true);
+     $("#txt_productID").val(data[0]);
+     $("#txt_productName").val(data[1]);
+     $("#ta_descripPro").val(data[2]);
+     $("#txt_lot").val(data[3]);
+     $("#txt_price").val(data[4]);
+     $("#txt_barCode").val(data[6]);
+     $("#txt_oldPrice").val(data[5]);
+     $("#txt_productModel").val(data[8]);
+     $("#txt_trademark").val(data[7]);
+     $("#txt_productSize").val(data[10]);
+     $("#btn_push").val("ACTUALIZAR");
+     action="ACTUALIZAR"
+     form=data;
+     $("#btn_delete").css("visible",true);     
+     _modalContent(data,"¿Deseas actualizar este artículo?");
   }
 
 /*
@@ -128,19 +169,21 @@ const loadDataTable=(route)=>{
        $("#txt_productSize").val("");
        $("#ta_descripPro").val("");
        $("#txt_lot").val("");
-       location.reload(); 
+       //location.reload(); 
   }
 
 
   /*
     lista los pedidos
- */function _displayStorageTable(category,subCategory){
+ */function _displayStorageTable(category,subCategory, hasAll){
      let route = CATEGORY_PRODUCTS+"/"+category+"/"+subCategory;
      console.log(route);
-     loadDataTable(route)
+     if(category !="Todas" && subCategory !="Todas"){
+      loadDataTable(route,hasAll)
+     }  ; 
   }
 
-
+   
 /*
     Listening page actions
  */function _onChangeStatusPage(catalog){
@@ -175,10 +218,9 @@ const loadDataTable=(route)=>{
       $('#btn_push').click(()=> {_addProduct(category,subCategory,materials,catalog,colors)});
       $('#btn_delete').click(()=> {deleteData(CATEGORY_PRODUCTS+"/"+category+"/"+subCategory+"/"+form[0]+"/")});
       $("#btn_delete").css("visible",true);
-    //METHODS
+    //METHODS TABLE
       _captureRowData();
-      
-    
+       loadCategories(CATEGORY_PRODUCTS);
   }   
 
 /*
@@ -216,9 +258,62 @@ const loadDataTable=(route)=>{
         console.log(route+product);
          console.log(product);
         //console.log(product);
-        action=="GUARDAR"?addData(route,product):updateData(route,product);
-        
+        if(action=="GUARDAR"){
+          
+          addData(route,product);
+        }else{
+          updateData(route,product); 
+          }  
+          console.log(action);
     }
+// --------------- FUNCTION UTIL ---------------
+
+/**
+ * Optimizador de informacion de objetos
+ * -limpia los datos nulos o vacios
+ * - retorna el objeto con la informacion necesaria
+ */
+function _cleanObj( obj )
+  {
+    for( let prop in obj ){
+      if( obj[prop] == '' || obj[prop] == null ){ delete obj[prop]; }
+    }
+    return obj;
+  } 
+
+/**
+ * traza el contenido del modal
+ */
+function _modalContent(data,title){
+    // Create Cart Elemets
+    
+    var $img0 = $("<img>", {id:"", "class":"media-object", width:120, "alt":"Sample Image", src:data[11][0]});
+    var $h0 = $("<h2>", {id:"", class:"media-heading text-warning", text: data[1]});
+    var $h1 = $("<h4>", {id:"", class:"deleteText", text: data[2]});
+    $("#modal-title").html(title)
+    $("#modal-img").html($img0);
+    $("#modal-body").html($h0);
+    $("#modal-body").html($h1);
+  
+}
+
+/**
+ * traza el contenido del modal
+ */
+function _modalError(msg,title){
+    // Create Cart Elemets
+    
+    // var $h0 = $("<h2>", {id:"", class:"media-heading text-warning", text: data[0]});
+    var $h1 = $("<h4>", {id:"", class:"deleteText", text: msg});
+    $("#modal-title-error").html(title)
+    $("#modal-msg").html($h1);
+    
+  
+}
+
+
+
+
 // --------------- NAVEGATION DASHBOARD ---------------
 
 /*
@@ -232,7 +327,7 @@ const loadDataTable=(route)=>{
       page.css("display", display?"display":"none");
       display?page.fadeIn(1000):page.fadeOut(1000);
       screen =id;
-      action="GUARDAR"
+  
     }
       
 /*
@@ -240,13 +335,28 @@ const loadDataTable=(route)=>{
  */
 $(document).on('ready', function() {
     showPage();
-    $("#input-folder-2").fileinput({
+    _fileUpload()
+    
+    var catalog =[];
+    addImages(catalog);
+
+//---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
+    _onChangeStatusPage(catalog);
+   
+});
+//mantener aqui!!
+loadSidebar();
+
+
+//carga imagenes
+function _fileUpload(){
+      $("#input-folder-2").fileinput({
         browseLabel: 'Selecciona imagenes...',
         previewFileType: "image",
         language: "es",
         showUpload: false,
         browseClass: "btn btn-success",
-        browseLabel: "Agregar",
+        browseLabel: "Catalogo",
         browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
         removeClass: "btn btn-danger",
         removeLabel: "Eliminar",
@@ -255,67 +365,13 @@ $(document).on('ready', function() {
         uploadLabel: "Cargar",
         uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
     });
-    // method chaining
-    // $('#input-folder-2').fileinput('upload').fileinput('disable');
-    var catalog =[];
-    $('#input-folder-2').on('fileloaded', function(event, file, previewId, index, reader) {
-        // Get a reference to the storage service, which is used to create references in your storage bucket
-        var storage = firebase.storage();
-        // Create a storage reference from our storage service
-        var storageRef = storage.ref();
-        //Create the file metadata
-        var metadata = {
-          contentType: 'image/jpeg'
-        };
-        //Upload file and metadata to the object 'images/mountains.jpg'
-        var uploadTask = storageRef.child($("#txt_productID").val()+'/' + file.name).put(file, metadata);
-        //Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-          function(snapshot) {
-            //Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused');
-                break;
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-                break;
-            }
-          }, function(error) {
-          //A full list of error codes is available at
-          //https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/unauthorized':
-              //User doesn't have permission to access the object
-              break;
-            case 'storage/canceled':
-              //User canceled the upload
-              break;
-            case 'storage/unknown':
-              //Unknown error occurred, inspect error.serverResponse
-              break;
-          }
-        }, function() {
-          // Upload completed successfully, now we can get the download URL
-          var downloadURL = uploadTask.snapshot.downloadURL;
-          console.log(downloadURL);
-          catalog.push(downloadURL);
-         
-          
-        });
-      
-    });             
+}
 
-//---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
-    _onChangeStatusPage(catalog);
-    
-});
 //Loads the correct sidebar on window load,
 //collapses the sidebar on window resize.
 // Sets the min-height of #page-wrapper to window size
-$(function() {
+function loadSidebar(){
+  $(function() {
     $(window).bind("load resize", function() {
         topOffset = 50;
         width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
@@ -342,8 +398,45 @@ $(function() {
         element.addClass('active');
     }
 });
+}
 
-
+function addImages(catalog){
+  $('#input-folder-2').on('fileloaded', function(event, file, previewId, index, reader) {
+        var storage = firebase.storage();
+        var storageRef = storage.ref();
+        var metadata = {
+          contentType: 'image/jpeg'
+        };
+        var uploadTask = storageRef.child($("#txt_productID").val()+'/' + file.name).put(file, metadata);
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+          function(snapshot) {
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
+                break;
+            }
+          }, function(error) {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              break;
+            case 'storage/canceled':
+              break;
+            case 'storage/unknown':
+              break;
+          }
+        }, function() {
+          var downloadURL = uploadTask.snapshot.downloadURL;
+          console.log(downloadURL);
+          catalog.push(downloadURL);    
+        });
+      
+    });           
+}
 
 
 

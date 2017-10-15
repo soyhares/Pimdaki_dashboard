@@ -40,6 +40,72 @@
 </head>
 <body>
 
+
+   <!-- Modal -->
+    <div class="modal animated bounceIn" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-warning">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="header-text">
+                        <i class="fa fa-exclamation-triangle pos-i">                    
+                        </i> 
+                   <span id="modal-title"></span> 
+                </h3>
+
+                </div>
+                <div id="warningModal" class="modal-body">
+                  <div  class="media">
+                    <a id="modal-img" class="pull-left pull-width">
+                        <!-- <img src="http://placehold.it/180x200/456" class="media-object" alt="Sample Image"> -->
+                    </a>
+                    <div id="modal-body" class="media-body">
+                      <!-- <h1 class="media-heading">Bootstrap thumbnail example</h1>
+                        <h4>Using the .media and .media-body built-in classes</h4>
+                      <h4>Simple trick, just apply pull-left to the image</h4> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning pull-left" data-dismiss="modal" onclick="setDataTale(false)">Cancelar </button>
+                    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" onclick="setDataTale(true)">Aceptar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->     
+
+ <!-- Modal -->
+    <div class="modal animated bounceIn" id="modalError" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-warning">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="header-text">
+                        <i class="fa fa-exclamation-triangle pos-i">                    
+                        </i> 
+                   <span id="modal-title-error"></span> 
+                </h3>
+
+                </div>
+                <div id="errorModal" class="modal-body">
+                  <div  class="media">
+                    <a  class="pull-left pull-width">
+                         <img src="src/error.png" width="100" class="media-object" alt="Sample Image"> 
+                    </a>
+                    <div id="modal-msg" class="media-body">
+                      <!-- <h1 class="media-heading">Bootstrap thumbnail example</h1>
+                        <h4>Using the .media and .media-body built-in classes</h4>
+                      <h4>Simple trick, just apply pull-left to the image</h4> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" onclick="">Aceptar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 <div id="wrapper">
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -166,13 +232,13 @@
                                  <div class="form-group">
                                     <label>Categoría</label>
                                     <select id="dd_category" class="form-control">
-                                        <option>Promociones</option>
+                                        <!--<option>Promociones</option>
                                         <option>Electro y Tecnología</option>
                                         <option>Entretenimiento</option>
                                         <option>Hogar y Cocina</option>
                                         <option>BBQ y Jardines</option>
                                         <option>Deportes y Ocio</option>
-                                        <option>Salud y Belleza</option>
+                                        <option>Salud y Belleza</option>-->
                                     </select>
                                 </div>
                             </div>
@@ -180,7 +246,7 @@
                                 <div class="form-group">
                                     <label>Sub - Categoría</label>
                                     <select id="dd_subCategory" class="form-control">
-                                        <option>Accesorios</option>
+                                       <!-- <option>Accesorios</option>
                                         <option>Audio y video</option>
                                         <option>Regalos</option>
                                         <option>Juegos de Mesa</option>
@@ -197,7 +263,7 @@
                                         <option>Juegos Indoor</option>
                                         <option>Cuidado Personal</option>
                                         <option>Masajeadores</option>
-                                        <option>Terapia</option>
+                                        <option>Terapia</option>-->
                                     </select>
                                 </div>
                             </div>
@@ -419,7 +485,7 @@
         </div>
     </div>
             
-           
+ 
         
 
 
