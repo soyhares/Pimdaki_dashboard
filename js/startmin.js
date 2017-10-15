@@ -438,11 +438,9 @@ function _imgPreview(key,catalog){
  var img = "";
  var btn="";
  var div = "";
- console.log(key);
   for (var i = 0; i < catalog.length; i++) {
     img = $("<img>", {id:"img-"+i, "class":"media-object", width:80,height:80,"alt":"Sample Image", src:catalog[i]});
-    let id ="img-"+i;
-    btn = $("<input>", {id:catalog[i], type:"button", value:"Borrar", "class":"btn btn-danger", onclick:"deleteImg("+key+",img-0)"});
+    btn = $("<input>", {id:catalog[i], type:"button", value:"Borrar", "class":"btn btn-danger", onclick:"deleteImg("+i+")"});
     
     $("#img-preview").append(img);
     $("#img-preview").append(btn);
@@ -450,22 +448,22 @@ function _imgPreview(key,catalog){
 
 }
 
-function deleteImg(id,img){
-   console.log("Borrado-->"+id+""+img);
-  // // console.log(id);
-  // var storage = firebase.storage();
+function deleteImg(i){
+   console.log(i);
+  // console.log(id);
+  var storage = firebase.storage();
 
-  //   // Create a storage reference from our storage service
-  //   var storageRef = storage.ref();
-  //     // Create a reference to the file to delete
-  //   var desertRef = storageRef.child(id+'/'+img);
+    // Create a storage reference from our storage service
+    var storageRef = storage.ref();
+      // Create a reference to the file to delete
+    var desertRef = storageRef.child(form[0]+'/img-'+i);
 
-  //   // Delete the file
-  //   desertRef.delete().then(function() {
-  //     console.log("Borrado-->"+id+"/"+img);
-  //   }).catch(function(error) {
-  //         console.log(error);
-  //   });
+    // Delete the file
+    desertRef.delete().then(function() {
+      console.log("Borrado-->"+id+"/"+img);
+    }).catch(function(error) {
+          console.log(error);
+    });
 }
 
 
