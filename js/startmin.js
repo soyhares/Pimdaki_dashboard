@@ -148,7 +148,7 @@ const loadDataTable=(route="", hasAll=false)=>{
      $("#txt_productSize").val(data[10]);
      $("#txt_category").val(data[14]);
      $("#txt_subCategory").val(data[15]);
-     _imgPreview(data[0],data[11]);
+     //_imgPreview(data[0],data[11]);
      $("#btn_push").val("ACTUALIZAR");
      action="ACTUALIZAR"
      form=data;
@@ -265,8 +265,10 @@ const loadDataTable=(route="", hasAll=false)=>{
           addData(route,product);
         }else{
           updateData(route,product); 
+          location.reload();
           }  
           console.log(action);
+          
     }
 // --------------- FUNCTION UTIL ---------------
 
