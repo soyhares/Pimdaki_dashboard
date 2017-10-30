@@ -113,7 +113,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Panel de Control</a>
+            <a class="navbar-brand" href="#">PinDaki | Administrativo</a>
         </div>
 
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -173,7 +173,7 @@
             <div class="sidebar-nav navbar-collapse">
 
                 <ul class="nav" id="side-menu">
-                    <li class="sidebar-search">
+                   <!--  <li class="sidebar-search">
                         <div class="input-group custom-search-form">
                             <input id="txt_search" type="text" class="form-control" placeholder="Search...">
                                 <span class="input-group-btn">
@@ -182,9 +182,9 @@
                                     </button>
                                 </span>
                         </div>
-                    </li>
-                    <li><a href="https://developers.google.com/chart/interactive/docs/basic_multiple_charts" class="active"><i class="fa fa-dashboard fa-fw"></i> Estadistica</a>
-                    </li>    
+                    </li> -->
+                  <!--   <li><a href="https://developers.google.com/chart/interactive/docs/basic_multiple_charts" class="active"><i class="fa fa-dashboard fa-fw"></i> Estadistica</a>
+                    </li>     -->
                     <li>
                         <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Productos</a>
                             <ul class="nav nav-second-level">
@@ -201,18 +201,31 @@
                         <a href="#"><i class="fa fa-sitemap fa-fw"></i> Pedidos<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="#">Pendientes</a>
+                                <a id="btn_orderRequest" href="#">Pendientes</a>
                             </li>
                             <li>
-                                <a href="#">Entregados</a>
+                                <a id="btn_orderProcessed" href="#">Procesados</a>
                             </li>
                             <li>
-                                <a href="#">Cancelados</a>
+                                <a id="btn_orderDelivered" href="#">Entregados</a>
+                            </li>
+                            <li>
+                                <a id="btn_orderCanceled" href="#">Cancelados</a>
                             </li>
                         </ul>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-user"></i> Usuarios<span class="fa "></span></a>
+                        <ul class="nav nav-second-level">
+                             <li>
+                                <a id="btn_orderProcessed" href="#">Administrar</a>
+                            </li>
+                            <li>
+                                <a id="btn_orderRequest" href="#">Registrar</a>
+                            </li>
+                           
+
+                        </ul>
                     </li>
                 </ul>
 
@@ -221,10 +234,10 @@
     </nav>
 
     <!-- Page Content -->
-    <div id="page-wrapper"  >
+    <div id="page-wrapper">
           <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Productos</h1>
+                    <h2 class="page-header">Panel de Control</h2>
                 </div>
             </div>
 
@@ -450,7 +463,7 @@
         </div>
 
         <!-- /////////////////////////////////////////////////--> 
-        <!-- ////////////////// TABLE HERE!! //////////////////--> 
+        <!-- ///////////// TABLE PRODUCTS HERE!! /////////////--> 
         <!-- /////////////////////////////////////////////////-->  
         <div id="tbl_products">
                  <!-- Primer Panel de Ingreso --> 
@@ -531,10 +544,41 @@
                       </div> 
                 </div>  
         </div>
-         
-    </div>
+
+        <!-- /////////////////////////////////////////////////--> 
+        <!-- ////////////////// TABLE HERE!! //////////////////--> 
+        <!-- /////////////////////////////////////////////////-->  
+        <div id="tbl_orders">
+                 <!-- Primer Panel de Ingreso --> 
             
- 
+                <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="dataTable_wrapper">
+                                            <table class="table table-striped table-bordered table-hover" id="tbl_storage">
+                                                  <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>CARRITO</th>
+                                                            <th>DESTINO</th>
+                                                            <th>MEDIO</th>
+                                                            <th>CONTACTO</th>                     
+                                                        </tr>
+                                                    </thead>
+                                                  
+                                                </table>
+                                         </div> 
+
+                                     </div> 
+                                </div> 
+                             </div> 
+                      </div> 
+                </div>  
+        </div>
+
+    </div>
         
 
 

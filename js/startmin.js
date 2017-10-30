@@ -218,6 +218,14 @@ const loadDataTable=(route="", hasAll=false)=>{
       $('#btn_push').click(()=> {_addProduct(materials,catalog,colors)});
       $('#btn_delete').click(()=> {deleteData(CATEGORY_PRODUCTS+"/"+category+"/"+subCategory+"/"+form[0]+"/")});
       $("#btn_delete").css("visible",true);
+
+      //orders access
+      $('#btn_orderRequest').click(()=>{showPage("tbl_orders",true)});
+      $('#btn_orderProcessed').click(()=>{showPage("tbl_orders",true)});
+      $('#btn_orderDelivered').click(()=>{showPage("tbl_orders",true)});
+      $('#btn_orderCanceled').click(()=>{showPage("tbl_orders",true)});
+
+      
     //METHODS TABLE
       _captureRowData();
        loadCategories(CATEGORY_PRODUCTS);
