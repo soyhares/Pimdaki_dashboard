@@ -88,6 +88,61 @@ const loadDataTable=(route="", hasAll=false)=>{
          }); 
  }  
 
+
+
+/**
+ * load orders
+ */
+const loadOrder = (route) => {
+  let table= $('#tbl_order').DataTable();
+  firebase.database()
+          .ref("orders/request")
+          .on("child_added",function(snap){
+              if(snap.exists()) {
+                  let data = snap.val();
+                  let order = data.details;
+                  let product = data.buy;
+                  table.rows.add([{
+                    0:snap.key,
+                    1:()=>{
+                      let print = [];
+                      for (i=0; i <product.length; i++) {
+                        let id = "\nID: "+product[i].id;
+                        let lot = "\nCantidad: "+product[i].lot;
+                        let show = id+""+lot;
+                        print.push(show);
+                      }
+                      return print;
+                    },
+                    2:["\nDirección: "+order.address,"\nZIP: "+order.zip],
+                    3:order.company,
+                    4:["\nCliente: "+order.name+" "+order.lastName,"\nTel:" +order.phone, "\nEmail: "+order.email],
+                    // 4:data.price,
+                    // 5:data.oldPrice,
+                    // 6:data.barCode,
+                    // 7:data.tradeMark,
+                    // 8:data.model,
+                    // 9:data.materials,
+                    // 10:data.size,
+                    // 11:data.catalog,
+                    // 12:data.rating,
+                    // 13:data.colors,
+                    // 14:data.category,
+                    // 15:data.subCategory
+  
+                  }]).draw();
+              } 
+
+          });
+}
+
+
+
+
+
+
+
+
  const loadCategories=(route)=>{ 
   firebase.database()
           .ref(route)
@@ -107,16 +162,22 @@ const loadDataTable=(route="", hasAll=false)=>{
 
 /**
  * capture table storage row and set to form
- */function _captureRowData(){
+ */function _captureRowData(ID_TABLE="tbl_storage", modalView = 'modalForm', isForm=true){
    //TABLE LISTENER
-    let table = $('#tbl_storage').DataTable();
-    $('#tbl_storage tbody').on( 'dblclick', 'tr', function () {
+    let table = $('#'+ID_TABLE).DataTable();
+    $('#'+ID_TABLE+' tbody').on( 'dblclick', 'tr', function () {
       let data = table.row( this ).data();
         if(data[0]!= undefined) {
-          $('#modalForm').modal('show');
-          _write(data);
+         
+          $('#'+modalView).modal('show');
+          isForm?_write(data):showOrderBill(data);
+
         }else{
-          _modalError("Selecione antes una categoria y sub-categoria de productos","Error");
+         isForm?
+                 _modalError("Selecione antes una categoria y sub-categoria de productos","Error")
+              :
+                _modalError("Problema para cargar su orden","Error")
+              ;
           $('#modalError').modal('show');
         }
     } );
@@ -131,6 +192,13 @@ const loadDataTable=(route="", hasAll=false)=>{
         _reset();
        }
        action="ACTUALIZAR";      
+  }
+
+/**
+ * showOrderBill
+ */function showOrderBill(data){
+    id = data[0]
+
   }
 
 /**
@@ -220,14 +288,19 @@ const loadDataTable=(route="", hasAll=false)=>{
       $("#btn_delete").css("visible",true);
 
       //orders access
-      $('#btn_orderRequest').click(()=>{showPage("tbl_orders",true)});
+      $('#btn_orderRequest').click(()=>{
+        loadOrder();
+        showPage("tbl_orders",true)
+
+      });
       $('#btn_orderProcessed').click(()=>{showPage("tbl_orders",true)});
       $('#btn_orderDelivered').click(()=>{showPage("tbl_orders",true)});
       $('#btn_orderCanceled').click(()=>{showPage("tbl_orders",true)});
 
       
     //METHODS TABLE
-      _captureRowData();
+      _captureRowData();//products
+      _captureRowData("tbl_order",'modalForm',false);//cus
        loadCategories(CATEGORY_PRODUCTS);
   }   
 
