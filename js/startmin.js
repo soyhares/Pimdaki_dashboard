@@ -88,13 +88,12 @@ const loadDataTable=(route="", hasAll=false)=>{
          }); 
  }  
 
-
-
 /**
  * load orders
  */
 const loadOrder = (route) => {
   let table= $('#tbl_order').DataTable();
+  table.clear();
   firebase.database()
           .ref("orders/request")
           .on("child_added",function(snap){
@@ -115,7 +114,7 @@ const loadOrder = (route) => {
                       return print;
                     },
                     2:["\nDirección: "+order.address,"\nZIP: "+order.zip],
-                    3:order.company,
+                    3:order.company=="CorreosCR"?"CorreosCostaRica":order.company,
                     4:["\nCliente: "+order.name+" "+order.lastName,"\nTel:" +order.phone, "\nEmail: "+order.email],
                     // 4:data.price,
                     // 5:data.oldPrice,
@@ -136,15 +135,34 @@ const loadOrder = (route) => {
           });
 }
 
+function toFade(){
+  $("#myProgress").css("display", "none");
+}
 
 
+function progressbar(progress) {
+    $("#myProgress").css("display", "none");
+    //$("#btns_group").css("display", "none");
+    $("#myProgress").fadeIn(1000)
 
-
-
+    var elem = document.getElementById("myBar");   
+    var width = 1;
+    var id = setInterval(frame, progress);
+    function frame() {
+      if (width >= 100) {
+        clearInterval(id);  
+              
+      } else {
+        width++; 
+        elem.style.width = width + '%'; 
+      }
+    }
+ 
+}
 
 
  const loadCategories=(route)=>{ 
-  firebase.database()
+    firebase.database()
           .ref(route)
           .on('child_added', function(snapshot){
             $("#dd_category").append("<option>"+snapshot.key+"</option>") ; 
@@ -300,7 +318,7 @@ const loadOrder = (route) => {
       
     //METHODS TABLE
       _captureRowData();//products
-      _captureRowData("tbl_order",'modalForm',false);//cus
+      _captureRowData("tbl_order",'modalOrder',false);//cus
        loadCategories(CATEGORY_PRODUCTS);
   }   
 
@@ -398,8 +416,10 @@ function _modalError(msg,title){
   Animation to navigation page
  */const showPage=(id="tbl_products",display="true")=>{//frm || tbl 
       //hide all page here!
+       toFade();
       $("#frm_products").css("display", "none");
       $("#tbl_products").css("display", "none");
+      $("#tbl_orders").css("display", "none");
 
       let page =$("#"+id);
       page.css("display", display?"display":"none");
@@ -413,13 +433,15 @@ function _modalError(msg,title){
  */
 $(document).on('ready', function() {
     showPage();
-    _fileUpload()
-    
+
+
     var catalog =[];
-    addImages(catalog);
+    _fileUpload(catalog)
+    
 
 //---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
     _onChangeStatusPage(catalog);
+   
    
 });
 //mantener aqui!!
@@ -427,14 +449,14 @@ loadSidebar();
 
 
 //carga imagenes
-function _fileUpload(){
+function _fileUpload(catalog){
       $("#input-folder-2").fileinput({
         browseLabel: 'Selecciona imagenes...',
         previewFileType: "image",
         language: "es",
         showUpload: false,
         browseClass: "btn btn-success",
-        browseLabel: action,
+        browseLabel: "Catálogo",
         browseIcon: "<i class=\"glyphicon glyphicon-picture\"></i> ",
         removeClass: "btn btn-danger",
         removeLabel: "Eliminar",
@@ -443,6 +465,11 @@ function _fileUpload(){
         uploadLabel: "Cargar",
         uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> "
     });
+
+
+    addImages(catalog);
+    $("#myProgress").css("display", "none");
+     $("#btns_group").css("display", "display");
 }
 
 //Loads the correct sidebar on window load,
@@ -480,6 +507,7 @@ function loadSidebar(){
 
 function addImages(catalog){
   $('#input-folder-2').on('fileloaded', function(event, file, previewId, index, reader) {
+    
         var storage = firebase.storage();
         var storageRef = storage.ref();
         var metadata = {
@@ -489,6 +517,9 @@ function addImages(catalog){
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
           function(snapshot) {
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            
+            progressbar(progress+10);
+            
             console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
               case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -496,6 +527,7 @@ function addImages(catalog){
                 break;
               case firebase.storage.TaskState.RUNNING: // or 'running'
                 console.log('Upload is running');
+                
                 break;
             }
           }, function(error) {
@@ -506,14 +538,21 @@ function addImages(catalog){
               break;
             case 'storage/unknown':
               break;
+
+              $("#myProgress").css("background","red");
+              $("#btns_group").fadeIn(1000);
           }
         }, function() {
           var downloadURL = uploadTask.snapshot.downloadURL;
           console.log(downloadURL);
-          catalog.push(downloadURL);    
+          catalog.push(downloadURL); 
+    
         });
       
-    });           
+       
+    });
+
+
 }
 
 
