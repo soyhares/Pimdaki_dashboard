@@ -91,11 +91,12 @@ const loadDataTable=(route="", hasAll=false)=>{
 /**
  * load orders
  */
-const loadOrder = (route) => {
-  let table= $('#tbl_order').DataTable();
+const loadOrder = (orderStatus) => {
+  console.log(orderStatus)
+  let table = $('#tbl_order').DataTable();
   table.clear();
   firebase.database()
-          .ref("orders/request")
+          .ref("orders/"+orderStatus)
           .on("child_added",function(snap){
               if(snap.exists()) {
                   let data = snap.val();
@@ -104,30 +105,18 @@ const loadOrder = (route) => {
                   table.rows.add([{
                     0:snap.key,
                     1:()=>{
-                      let print = [];
-                      for (i=0; i <product.length; i++) {
-                        let id = "\nID: "+product[i].id;
-                        let lot = "\nCantidad: "+product[i].lot;
-                        let show = id+""+lot;
-                        print.push(show);
+                      let list = "<ul>";
+                       for (i=0; i <product.length; i++) {
+                        list+="<li>"+product[i].id+"</li>";
+                        list+="<li>"+"Cantidad:"+product[i].lot+"</li>";
+                        list+="</br>";
                       }
-                      return print;
+                      return list+"</ul>";
                     },
-                    2:["\nDirección: "+order.address,"\nZIP: "+order.zip],
-                    3:order.company=="CorreosCR"?"CorreosCostaRica":order.company,
-                    4:["\nCliente: "+order.name+" "+order.lastName,"\nTel:" +order.phone, "\nEmail: "+order.email],
-                    // 4:data.price,
-                    // 5:data.oldPrice,
-                    // 6:data.barCode,
-                    // 7:data.tradeMark,
-                    // 8:data.model,
-                    // 9:data.materials,
-                    // 10:data.size,
-                    // 11:data.catalog,
-                    // 12:data.rating,
-                    // 13:data.colors,
-                    // 14:data.category,
-                    // 15:data.subCategory
+                    2:"<ul><li>"+order.zip+"</li><li>"+order.address+"</li></ul>",
+                    3:order.company=="CorreosCR"?"Correos de Costa Rica":order.company,
+                    4:"<ul><li>"+order.name+" "+order.lastName+"</li><li>" +order.phone+"</li><li>"+order.email+"</li></ul>",
+                    
   
                   }]).draw();
               } 
@@ -135,6 +124,7 @@ const loadOrder = (route) => {
           });
 }
 
+//oculta o muestra el progress Bar
 function toFade(){
   $("#myProgress").css("display", "none");
 }
@@ -307,13 +297,22 @@ function progressbar(progress) {
 
       //orders access
       $('#btn_orderRequest').click(()=>{
-        loadOrder();
-        showPage("tbl_orders",true)
+        loadOrder("request");
+        showPage("tbl_orders",true);
 
       });
-      $('#btn_orderProcessed').click(()=>{showPage("tbl_orders",true)});
-      $('#btn_orderDelivered').click(()=>{showPage("tbl_orders",true)});
-      $('#btn_orderCanceled').click(()=>{showPage("tbl_orders",true)});
+      $('#btn_orderProcessed').click(()=>{
+        loadOrder("processed");
+        showPage("tbl_orders",true);
+      });
+      $('#btn_orderDelivered').click(()=>{
+        loadOrder("delivered");
+        showPage("tbl_orders",true);
+      });
+      $('#btn_orderCanceled').click(()=>{
+        loadOrder("canceled");
+        showPage("tbl_orders",true);
+      });
 
       
     //METHODS TABLE
@@ -507,7 +506,9 @@ function loadSidebar(){
 
 function addImages(catalog){
   $('#input-folder-2').on('fileloaded', function(event, file, previewId, index, reader) {
-    
+
+      console.log(event)
+
         var storage = firebase.storage();
         var storageRef = storage.ref();
         var metadata = {
