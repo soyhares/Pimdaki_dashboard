@@ -60,6 +60,31 @@
 <body>
 
 
+
+       <!-- Modal -->
+    <div class="modal animated bounceIn" id="modalAnimation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="header-text">
+                        <i class="fa fa-check-circle-o" style="font-size:35px;color:#2bb8f9">                    
+                        </i> 
+                   <span id="modal-title">Realizado con exito!</span> 
+                </h3>
+
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info pull-right" onclick="window.location.reload(true);" data-dismiss="modal">Aceptar</button>
+                  
+                </div>
+            </div><!-- /.modal-content -->
+
+       
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal --> 
+
        <!-- Modal -->
     <div class="modal animated bounceIn" id="modalHome" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -673,7 +698,7 @@
                                
                                             <div id ="pls_orders"> 
                                              <!-- /.col-lg-4 -->
-                                                    <div class="row">
+                                              
                                                         <div class="col-lg-4">
                                                                 <div class="panel panel-primary">
                                                                     <div class="panel-heading">
@@ -736,21 +761,23 @@
                                                                 <!-- /.col-lg-4 -->
                                                             </div>
 
-                                                   </div>        
+                                                      
                                                        
                                                         <!-- /.row -->
-                                                      
+                                                     
                                                              <div class="col-lg-12">
+
                                                                 <form role="form">
                                                                            
                                                                     <div class="form-group">
-                                                                        <input type="button" id="btn_dispatcher" value="Despachar" class="btn btn-success btn-md" /> 
+                                                                        <input type="button" id="btn_dispatcher" value="Despachar Orden" class="btn btn-success btn-md" />
+
+                                                                        <input type="button" id="btn_cancelar_orden" value="Cancelar Order" class="btn btn-danger btn-md" /> 
 
                                                                     </div>
                                                                 </form>
-                                                                
+                                                                 </div>    
                                                      
-                                                        </div>
                                                     
                                              </div> 
                                        
@@ -795,7 +822,6 @@
 <!-- DataTables JavaScript -->
 <script src="js/dataTables/jquery.dataTables.min.js"></script>
 <script src="js/dataTables/dataTables.bootstrap.min.js"></script>
-
 
 <!-- Custom Theme JavaScript -->
 <script src="js/startmin.js"></script>

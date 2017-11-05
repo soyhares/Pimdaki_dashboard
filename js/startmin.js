@@ -98,10 +98,10 @@ const loadDataTable=(route="", hasAll=false)=>{
 /**
  * load orders
  */
-const loadOrder = (status) => {
+const loadOrder = (status="request") => {
   console.log("param:"+status +" ...Estado buscado --->"+ (status=="request"?"pendiente":status=="processed"?"procesados":status=="canceled"?"cancelados":"entregados"));
   statusOrder=status;//global var to capture status in realTime
-  tbl_order.clear();
+  
  //acces keys
  let nextStatus = statusOrder == "request"? 
             "processed" : statusOrder == "processed"?//retorna processed
@@ -139,6 +139,7 @@ const iterableNodes = (data) =>{
   $("#pl_carrito").html(null);
 }
 
+//Obtiene un articulo especifico y lo dibuja en el panel
 const getArticle = (path,id,lot,key) =>{
   let body="";
   firebase.database()
@@ -157,7 +158,7 @@ const getArticle = (path,id,lot,key) =>{
        
 }
 
-
+//maping nodes PinDaki order
 const getNodes = (node,path,id) =>{
    firebase.database()
         .ref(path)
@@ -184,8 +185,8 @@ const getNodes = (node,path,id) =>{
             case "shipping": 
                              body="<ul>"+
                                           "<li>Código Postal: "+data.zip+"</li>"+
-                                          // "<li>País: "+data.address+"</li>"+
-                                          // "<li>Ciudad: "+data.city+"</li>"+
+                                          "<li>País: "+data.address+"</li>"+
+                                          "<li>Ciudad: "+data.city+"</li>"+
                                           "<li>Dirección: "+data.address+"</li>"+
                                           "<li>Mensajería: "+data.messenger+"</li>"+
                                           "<li>Costo: "+data.cost+"</li>"+
@@ -206,7 +207,7 @@ const getNodes = (node,path,id) =>{
         });
 
 }
-
+//drawing panels to order
 const drawPanels = (body,footer, id, add=false) =>{
   add ? $("#"+id).append(body) :$("#"+id).html(body); 
   $("#"+id+"_id").html("N° "+footer);
@@ -214,13 +215,13 @@ const drawPanels = (body,footer, id, add=false) =>{
 }
 
 //dispatcher
-const dispatcher = (id)=>{
+const dispatcher = (id, isCanceled=false)=>{
   let status = statusOrder == "request"? 
             "processed" : statusOrder == "processed"?//retorna processed
-            "delivered" : statusOrder == "delivered"?//retorna delivered
-            "canceled" : "request"; // retorna canceled
+            "delivered" : "request";
 
- 
+ isCanceled ? status ="canceled":status;
+
   const oldRef=firebase.database().ref("orders/"+statusOrder+"/"+id);
   const newRef=firebase.database().ref("orders/"+status+"/"+id);
   oldRef.once('value', function(snap)  {
@@ -232,6 +233,8 @@ const dispatcher = (id)=>{
 
   console.log("old---"+ statusOrder+"/"+id);
   console.log("next---"+status+"/"+id)     
+   $("#modalAnimation").modal("show");
+
 }
 
 
@@ -417,19 +420,23 @@ function progressbar(progress) {
 
       //orders access
       $('#btn_orderRequest').click(()=>{
+        tbl_order.clear();
         loadOrder("request");
         showPage("tbl_orders",true);
 
       });
       $('#btn_orderProcessed').click(()=>{
+        tbl_order.clear();
         loadOrder("processed");
         showPage("tbl_orders",true);
       });
       $('#btn_orderDelivered').click(()=>{
+        tbl_order.clear();
         loadOrder("delivered");
         showPage("tbl_orders",true);
       });
       $('#btn_orderCanceled').click(()=>{
+        tbl_order.clear();
         loadOrder("canceled");
         showPage("tbl_orders",true);
       });
@@ -439,13 +446,21 @@ function progressbar(progress) {
           let id = $("#pl_carrito_id").text();
           id = id.replace("N° ","");
           dispatcher(id);
-          
       });
+
+     $("#btn_cancelar_orden").click(()=>{
+        let id = $("#pl_carrito_id").text();
+        id = id.replace("N° ","");
+        dispatcher(id,true);
+      
+      });
+      
       
     //METHODS TABLE
       _captureRowData();//products
       _captureRowData("tbl_order",'modalOrder',false);//cus
        loadCategories(CATEGORY_PRODUCTS);
+       loadOrder(statusOrder);
   }   
 
 /*
@@ -542,7 +557,7 @@ function _modalError(msg,title){
 
 /*
   Animation to navigation page
- */const showPage=(id="frm_products",display="true")=>{//frm || tbl 
+ */const showPage=(id="tbl_orders",display="true")=>{//frm || tbl 
       //hide all page here!
        toFade();
       $("#frm_products").css("display", "none");
@@ -565,12 +580,12 @@ $(document).on('ready', function() {
 
     var catalog =[];
     _fileUpload(catalog);
- 
 
+          
 //---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
     _onChangeStatusPage(catalog);
-   $("#modalHome").modal("show");
-   
+    $("#modalHome").modal("show");
+
 });
 //mantener aqui!!
 loadSidebar();
