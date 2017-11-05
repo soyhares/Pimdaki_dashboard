@@ -24,6 +24,13 @@ Conexion
     var screen="tbl_products"; 
     var action="GUARDAR";
     var form = {};
+    var statusOrder="request";
+    var tbl_order = $('#tbl_order').DataTable(
+      { "bPaginate": true,
+        "bFilter": true,
+        "bInfo": true,
+      });
+
 
 //---------- MANAGEMENT DATA METHODS -----------
 //ADD NODES
@@ -34,7 +41,7 @@ const addData = (route, obj)=>{
           .then(()=>console.log("Realizado con exito!"))
           .catch((error)=>console.log("Error: "+error));
 }
-
+//almacenamiento
 const updateData = (route, obj)=>{
   firebase.database()
           .ref(route)
@@ -91,37 +98,150 @@ const loadDataTable=(route="", hasAll=false)=>{
 /**
  * load orders
  */
-const loadOrder = (orderStatus) => {
-  console.log(orderStatus)
-  let table = $('#tbl_order').DataTable();
-  table.clear();
+const loadOrder = (status) => {
+  console.log("param:"+status +" ...Estado buscado --->"+ (status=="request"?"pendiente":status=="processed"?"procesados":status=="canceled"?"cancelados":"entregados"));
+  statusOrder=status;//global var to capture status in realTime
+  tbl_order.clear();
+ //acces keys
+ let nextStatus = statusOrder == "request"? 
+            "processed" : statusOrder == "processed"?//retorna processed
+            "delivered" : statusOrder == "delivered"?//retorna delivered
+            "canceled" : "request"; // retorna canceled
+ nextStatus=status=="request"?"PROCESAR":"DESPACHAR";
+ 
   firebase.database()
-          .ref("orders/"+orderStatus)
-          .on("child_added",function(snap){
-              if(snap.exists()) {
+        .ref("orders/"+status)
+        .on("child_added",function(snap){    
+                if(snap.exists()) {
                   let data = snap.val();
-                  let order = data.details;
-                  let product = data.buy;
-                  table.rows.add([{
-                    0:snap.key,
-                    1:()=>{
-                      let list = "<ul>";
-                       for (i=0; i <product.length; i++) {
-                        list+="<li>"+product[i].id+"</li>";
-                        list+="<li>"+"Cantidad:"+product[i].lot+"</li>";
-                        list+="</br>";
-                      }
-                      return list+"</ul>";
-                    },
-                    2:"<ul><li>"+order.zip+"</li><li>"+order.address+"</li></ul>",
-                    3:order.company=="CorreosCR"?"Correos de Costa Rica":order.company,
-                    4:"<ul><li>"+order.name+" "+order.lastName+"</li><li>" +order.phone+"</li><li>"+order.email+"</li></ul>",
-                    
-  
-                  }]).draw();
-              } 
+                  tbl_order.rows.add([{0:snap.key,1:snap.val().userData}]).draw();
+                } 
 
+        });
+}
+
+const iterableNodes = (data) =>{
+  let key = data[0];
+  let uid = data[1].id
+   //maping vars
+  let props = ["cashOrder","destination","purchase","shipping","users"];
+  let path = null;//route
+   for(i in props){
+      path = "orders/"+props[i]+"/"+key;
+      if(props[i]=="users"){
+        path = "orders/"+props[i]+"/"+uid; 
+      }     
+     getNodes(props[i],path,key)
+
+  }
+  $("#pls_orders").fadeOut(500);
+  $("#pls_orders").fadeIn(1000);
+  $("#pl_carrito").html(null);
+}
+
+const getArticle = (path,id,lot,key) =>{
+  let body="";
+  firebase.database()
+        .ref("storage/products/categories/"+path+"/"+id)
+        .on("value",function(snap){
+            let data =snap.val();
+            body="<ul>"+
+                    "<li>ID: "+id+"</li>"+
+                    "<li>Nombre: "+data.name+"</li>"+
+                    "<li>Cantidad: "+lot+"</li>"+
+                    "<li>Precio: ₡"+data.price+"</li>"+
+                   
+              "</ul>";
+             drawPanels(body,key,"pl_carrito",true);
+        }); 
+       
+}
+
+
+const getNodes = (node,path,id) =>{
+   firebase.database()
+        .ref(path)
+        .on("value",function(snap){ 
+          let data = snap.val();
+          let body="";  
+          switch(node){
+
+            case "purchase": 
+                            let list =data.shippingList;
+                            for(i in list){
+                              getArticle(list[i].route,list[i].id,list[i].lot,id);
+                            } 
+                             break;
+            case "cashOrder": 
+                            body="<ul>"+
+                                          "<li>Monto: ₡"+data.fullPay+"</li>"+
+                                          "<li>Total: $"+data.total+"</li>"+
+                                          
+                                  "</ul>";
+                             drawPanels(body,id,"pl_cashOrder");
+                             break;
+            
+            case "shipping": 
+                             body="<ul>"+
+                                          "<li>Código Postal: "+data.zip+"</li>"+
+                                          // "<li>País: "+data.address+"</li>"+
+                                          // "<li>Ciudad: "+data.city+"</li>"+
+                                          "<li>Dirección: "+data.address+"</li>"+
+                                          "<li>Mensajería: "+data.messenger+"</li>"+
+                                          "<li>Costo: "+data.cost+"</li>"+
+                                    "</ul>";
+                             drawPanels(body,id,"pl_destination");
+                             break;
+            case "users":  
+                              body="<ul>"+
+                                          "<li>Nombre: "+data.name+" "+data.lastName+"</li>"+
+                                          "<li>Email: "+data.email+"</li>"+
+                                          "<li>Tel: "+data.phone+"</li>"+
+                                    "</ul>";
+                             drawPanels(body,id,"pl_customer");
+                             break;
+          }
+
+
+        });
+
+}
+
+const drawPanels = (body,footer, id, add=false) =>{
+  add ? $("#"+id).append(body) :$("#"+id).html(body); 
+  $("#"+id+"_id").html("N° "+footer);
+
+}
+
+//dispatcher
+const dispatcher = (id)=>{
+  let status = statusOrder == "request"? 
+            "processed" : statusOrder == "processed"?//retorna processed
+            "delivered" : statusOrder == "delivered"?//retorna delivered
+            "canceled" : "request"; // retorna canceled
+
+ 
+  const oldRef=firebase.database().ref("orders/"+statusOrder+"/"+id);
+  const newRef=firebase.database().ref("orders/"+status+"/"+id);
+  oldRef.once('value', function(snap)  {
+          newRef.set( snap.val(), function(error) {
+               if( !error ) {  oldRef.remove(); }
+               else if( typeof(console) !== 'undefined' && console.error ) {  console.error(error); }
           });
+     });    
+
+  console.log("old---"+ statusOrder+"/"+id);
+  console.log("next---"+status+"/"+id)     
+}
+
+
+function moveFbRecord(oldRef, newRef) {    
+     oldRef.once('value', function(snap)  {
+          newRef.set( snap.value(), function(error) {
+               if( !error ) {  oldRef.remove(); }
+               else if( typeof(console) !== 'undefined' && console.error ) {  console.error(error); }
+          });
+     });
 }
 
 //oculta o muestra el progress Bar
@@ -173,12 +293,18 @@ function progressbar(progress) {
  */function _captureRowData(ID_TABLE="tbl_storage", modalView = 'modalForm', isForm=true){
    //TABLE LISTENER
     let table = $('#'+ID_TABLE).DataTable();
-    $('#'+ID_TABLE+' tbody').on( 'dblclick', 'tr', function () {
+    $('#'+ID_TABLE+' tbody').on( 'click', 'tr', function () {
       let data = table.row( this ).data();
         if(data[0]!= undefined) {
+          
          
-          $('#'+modalView).modal('show');
-          isForm?_write(data):showOrderBill(data);
+          if(isForm){
+            _write(data);
+                 $('#'+modalView).modal('show');
+          }else{
+            iterableNodes(data);
+          }
+         
 
         }else{
          isForm?
@@ -202,12 +328,6 @@ function progressbar(progress) {
        action="ACTUALIZAR";      
   }
 
-/**
- * showOrderBill
- */function showOrderBill(data){
-    id = data[0]
-
-  }
 
 /**
  * Write data in form
@@ -229,7 +349,7 @@ function progressbar(progress) {
      action="ACTUALIZAR"
      form=data;
      $("#btn_delete").css("visible",true);     
-     _modalContent(data,"¿Deseas actualizar este artículo?");
+     _modalContent(data,data[1]);
   }
 
 /*
@@ -314,6 +434,13 @@ function progressbar(progress) {
         showPage("tbl_orders",true);
       });
 
+
+      $("#btn_dispatcher").click(()=>{
+          let id = $("#pl_carrito_id").text();
+          id = id.replace("N° ","");
+          dispatcher(id);
+          
+      });
       
     //METHODS TABLE
       _captureRowData();//products
@@ -388,14 +515,16 @@ function _cleanObj( obj )
  */
 function _modalContent(data,title){
     // Create Cart Elemets
-    
+    // console.log(title);
+    // console.log(data);
+
     var $img0 = $("<img>", {id:"", "class":"media-object", width:120, "alt":"Sample Image", src:data[11][0]});
     var $h0 = $("<h2>", {id:"", class:"media-heading text-warning", text: data[1]});
     var $h1 = $("<h4>", {id:"", class:"deleteText", text: data[2]});
-    $("#modal-title").html(title)
-    $("#modal-img").html($img0);
-    $("#modal-body").html($h0);
-    $("#modal-body").html($h1);
+    $("#modal-title-form").html(title)
+    $("#modal-img-form").html($img0);
+    $("#modal-body-form").html($h0);
+    $("#modal-body-form").html($h1);
   
 }
 
@@ -413,13 +542,14 @@ function _modalError(msg,title){
 
 /*
   Animation to navigation page
- */const showPage=(id="tbl_products",display="true")=>{//frm || tbl 
+ */const showPage=(id="frm_products",display="true")=>{//frm || tbl 
       //hide all page here!
        toFade();
       $("#frm_products").css("display", "none");
       $("#tbl_products").css("display", "none");
       $("#tbl_orders").css("display", "none");
 
+      
       let page =$("#"+id);
       page.css("display", display?"display":"none");
       display?page.fadeIn(1000):page.fadeOut(1000);
@@ -433,14 +563,13 @@ function _modalError(msg,title){
 $(document).on('ready', function() {
     showPage();
 
-
     var catalog =[];
-    _fileUpload(catalog)
-    
+    _fileUpload(catalog);
+ 
 
 //---------------------- DASHBOARD ADMINISTRATOR FORM LISTENER -------------------------------
     _onChangeStatusPage(catalog);
-   
+   $("#modalHome").modal("show");
    
 });
 //mantener aqui!!
