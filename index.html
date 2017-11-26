@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -665,131 +663,269 @@
         <!-- ////////////////// TABLE HERE!! //////////////////--> 
         <!-- /////////////////////////////////////////////////-->  
         <div id="tbl_orders">
-                 <!-- Primer Panel de Ingreso --> 
             
+          
                 <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="row">
-                                     <div class="col-lg-8">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                Lista de Ordenes
-                                            </div>
-                                            <!-- /.panel-heading -->
-                                            <div class="panel-body">
-                                                <div class="table-responsive">
-                                                            <table class="table" id="tbl_order">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>N° ORDEN</th>
-                                                                        
-                                                                    </tr>
-                                                                </thead>
-                                                               
-                                                            </table>
-                                                        </div>
-                                                        <!-- /.table-responsive -->
+
+                    <div id="tbl_requests">
+                        <div class="col-lg-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                             <div class="col-lg-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        Pedidos Pendientes
                                                     </div>
-                                                    <!-- /.panel-body -->
-                                                </div>
-                                                <!-- /.panel -->
-                                            </div>
-                               
-                                            <div id ="pls_orders"> 
-                                             <!-- /.col-lg-4 -->
-                                              
-                                                        <div class="col-lg-4">
-                                                                <div class="panel panel-primary">
-                                                                    <div class="panel-heading">
-                                                                        CARRITO
-                                                                    </div>
-                                                                    <div class="panel-body" id="pl_carrito">
-                                                                        <p id="pl_carrito"></p>
-                                                                    </div>
-                                                                    <div class="panel-footer" >
-                                                                        <p id="pl_carrito_id"></p>
-                                                                    </div>
+                                                    <!-- /.panel-heading -->
+                                                    <div class="panel-body">
+                                                        <div class="table-responsive">
+                                                                    <table class="table" id="tbl_request">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>N° ORDEN</th>
+                                                                                
+                                                                            </tr>
+                                                                        </thead>
+                                                                       
+                                                                    </table>
                                                                 </div>
+                                                                <!-- /.table-responsive -->
                                                             </div>
-                                                        <!-- /.col-lg-4 -->
-
-                                                            <div class="col-lg-4">
-                                                                <div class="panel panel-green">
-                                                                    <div class="panel-heading">
-                                                                        CLIENTE
-                                                                    </div>
-                                                                    <div class="panel-body" >
-                                                                       <p id="pl_customer"></p>
-                                                                    </div>
-                                                                    <div class="panel-footer" id="pl_customer_id">
-                                                                       <p id="pl_customer_id"></p>
-                                                                    </div>
-                                                                </div>
-                                                                <!-- /.col-lg-4 -->
-                                                            </div>
-                                                    
-                                                   
-                                                             <div class="col-lg-4">
-                                                                <div class="panel panel-yellow">
-                                                                    <div class="panel-heading">
-                                                                        ENVÍO
-                                                                    </div>
-                                                                    <div class="panel-body" >
-                                                                        <p id="pl_destination"></p>
-                                                                    </div>
-                                                                    <div class="panel-footer" >
-                                                                       <p id="pl_destination_id"></p>
-                                                                    </div>
-                                                                </div>
-                                                                <!-- /.col-lg-4 -->
-                                                            </div>
-                                                           
-
-                                                             <div class="col-lg-4">
-                                                                <div class="panel panel-red">
-                                                                    <div class="panel-heading">
-                                                                        COBRO
-                                                                    </div>
-                                                                    <div class="panel-body">
-                                                                        <p id="pl_cashOrder"></p>
-                                                                    </div>
-                                                                    <div class="panel-footer" >
-                                                                       <p id="pl_cashOrder_id"></p>
-                                                                    </div>
-                                                                </div>
-                                                                <!-- /.col-lg-4 -->
-                                                            </div>
-
-                                                      
-                                                       
-                                                        <!-- /.row -->
-                                                     
-                                                             <div class="col-lg-12">
-
-                                                                <form role="form">
-                                                                           
-                                                                    <div class="form-group">
-                                                                        <input type="button" id="btn_dispatcher" value="Despachar Orden" class="btn btn-success btn-md" />
-
-                                                                        <input type="button" id="btn_cancelar_orden" value="Cancelar Order" class="btn btn-danger btn-md" /> 
-
-                                                                    </div>
-                                                                </form>
-                                                                 </div>    
-                                                     
-                                                    
-                                             </div> 
+                                                            <!-- /.panel-body -->
+                                                        </div>
+                                                        <!-- /.panel -->
+                                                    </div>
                                        
-                                </div>  
+                                                    
+                                               
+                                        </div>  
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                        
+                    <div id="tbl_processeds">
+                        
+                        <div class="col-lg-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                             <div class="col-lg-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        Pedidos Procesados
+                                                    </div>
+                                                    <!-- /.panel-heading -->
+                                                    <div class="panel-body">
+                                                        <div class="table-responsive">
+                                                                    <table class="table" id="tbl_processed">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>N° ORDEN</th>
+                                                                                
+                                                                            </tr>
+                                                                        </thead>
+                                                                       
+                                                                    </table>
+                                                                </div>
+                                                                <!-- /.table-responsive -->
+                                                            </div>
+                                                            <!-- /.panel-body -->
+                                                        </div>
+                                                        <!-- /.panel -->
+                                                    </div>
+                                       
+                                                
+                                               
+                                        </div>  
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                     
+                    <div id="tbl_delivereds">
+                        
+                        <div class="col-lg-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                             <div class="col-lg-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        Pedidos Entregados
+                                                    </div>
+                                                    <!-- /.panel-heading -->
+                                                    <div class="panel-body">
+                                                        <div class="table-responsive">
+                                                                    <table class="table" id="tbl_delivered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>N° ORDEN</th>
+                                                                                
+                                                                            </tr>
+                                                                        </thead>
+                                                                       
+                                                                    </table>
+                                                                </div>
+                                                                <!-- /.table-responsive -->
+                                                            </div>
+                                                            <!-- /.panel-body -->
+                                                        </div>
+                                                        <!-- /.panel -->
+                                                    </div>
+                                       
+                                                    
+                                               
+                                        </div>  
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    
+                    <div id="tbl_cancelleds">
+                            
+                        <div class="col-lg-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                             <div class="col-lg-12">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        Pedidos Cancelados
+                                                    </div>
+                                                    <!-- /.panel-heading -->
+                                                    <div class="panel-body">
+                                                        <div class="table-responsive">
+                                                                    <table class="table" id="tbl_cancelled">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>N° ORDEN</th>
+                                                                                
+                                                                            </tr>
+                                                                        </thead>
+                                                                       
+                                                                    </table>
+                                                                </div>
+                                                                <!-- /.table-responsive -->
+                                                            </div>
+                                                            <!-- /.panel-body -->
+                                                        </div>
+                                                        <!-- /.panel -->
+                                                    </div>
+                                       
+                                                    
+                                               
+                                        </div>  
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+           
+               
+       
+           
+
+           
+         </div>
 
 
+        <!-- **********************************************************************************-->
+        <!-- *******************        PANELES DE ORDENES                   ******************-->
+        <!-- **********************************************************************************-->
+        <div id ="pls_orders"> 
+         <!-- /.col-lg-4 -->
+          
+                    <div class="col-lg-3">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    CARRITO
+                                </div>
+                                <div class="panel-body" id="pl_carrito">
+                                    <p id="pl_carrito"></p>
+                                </div>
+                                <div class="panel-footer" >
+                                    <p id="pl_carrito_id"></p>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- /.col-lg-4 -->
+
+                        <div class="col-lg-3">
+                            <div class="panel panel-green">
+                                <div class="panel-heading">
+                                    CLIENTE
+                                </div>
+                                <div class="panel-body" >
+                                   <p id="pl_customer"></p>
+                                </div>
+                                <div class="panel-footer" id="pl_customer_id">
+                                   <p id="pl_customer_id"></p>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-4 -->
+                        </div>
+                
+               
+                         <div class="col-lg-3">
+                            <div class="panel panel-yellow">
+                                <div class="panel-heading">
+                                    ENVÍO
+                                </div>
+                                <div class="panel-body" >
+                                    <p id="pl_destination"></p>
+                                </div>
+                                <div class="panel-footer" >
+                                   <p id="pl_destination_id"></p>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-4 -->
+                        </div>
+                       
+
+                         <div class="col-lg-3">
+                            <div class="panel panel-red">
+                                <div class="panel-heading">
+                                    COBRO
+                                </div>
+                                <div class="panel-body">
+                                    <p id="pl_cashOrder"></p>
+                                </div>
+                                <div class="panel-footer" >
+                                   <p id="pl_cashOrder_id"></p>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-4 -->
+                        </div>
+
+                  
+                   
+                    <!-- /.row -->
+                 
+                         <div class="col-lg-12">
+
+                            <form role="form">
+                                       
+                                <div class="form-group">
+                                    <input type="button" id="btn_dispatcher" value="Despachar Orden" class="btn btn-success btn-md" />
+
+                                    <input type="button" id="btn_cancelar_orden" value="Cancelar Order" class="btn btn-danger btn-md" /> 
+
+                                </div>
+                            </form>
+                        </div>    
+                 
+                
+         </div> 
 
 
-        </div>
+              
 
-    </div>
-        
+ </div>   
 
 
 <!-- Database  -->
